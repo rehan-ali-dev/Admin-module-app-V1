@@ -6,9 +6,9 @@ import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-componen
 import { ScrollView } from "react-native-gesture-handler";
 
 const CONTENT = {
-  tableHead: ['#Id', 'Customer', 'Chef', 'Ordered Time'],
+  tableHead: ['Kitchen Name', 'Account No.', 'Total', 'Status'],
   tableData: [
-    ['100','03082562292', '03082562292', '09:08'],
+    ['Bisma Ka Kitchen','03039898789', '10000', 'pending'],
     ['0','a', 'b', 'c'],
     ['0','1', '2', '3'],
     ['0','a', 'b', 'c'],
@@ -18,7 +18,7 @@ const CONTENT = {
 };
 
 
-const PendingTable=(props)=>{
+const KitchensPaymentsTable=()=>{
 
     
         return(
@@ -27,29 +27,17 @@ const PendingTable=(props)=>{
             <Table borderStyle={{ borderWidth: 0.7 }}>
               <Row
                 data={CONTENT.tableHead}
-                flexArr={[1, 2, 2, 1.5]}
+                flexArr={[2, 1.5, 0.8,1]}
                 style={styles.head}
                 textStyle={styles.text}
               /> 
               <TableWrapper style={styles.wrapper}>
-
-              {
-              props.tableContent.map((order,order_id) => {
-              <Row
-              key={order_id}
-              data={order.values}
-                style={styles.row}
-                flexArr={[1,2,2,1.5]}
-        />
-      })
-    }
-
-                {/*<Rows
-                  data={props.tableContent}
-                  flexArr={[1,2,2,1.5]}
+                <Rows
+                  data={CONTENT.tableData}
+                  flexArr={[2,1.5,0.8,1]}
                   style={styles.row}
                   textStyle={styles.text}
-                />*/}
+                />
               </TableWrapper>
               
             </Table>
@@ -62,7 +50,7 @@ const PendingTable=(props)=>{
 
 const styles=StyleSheet.create(
     {
-        container: { flex: 1, backgroundColor: '#fff',height:180 },
+        container: { flex: 1, backgroundColor: '#fff',height:200,marginHorizontal:5 },
         head: { height: 35, backgroundColor: 'orange'},
         wrapper: { flexDirection: 'row' },
         row: { height: 26 },
@@ -71,4 +59,4 @@ const styles=StyleSheet.create(
     }
 )
 
-export default PendingTable;
+export default KitchensPaymentsTable;

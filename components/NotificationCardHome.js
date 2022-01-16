@@ -10,7 +10,7 @@ const  NotificationCardHome=props=>{
             <View style={styles.orderHeader}>
                 <Text style={styles.headerText}>Pending Orders</Text>
             </View>
-            <PendingTable/>
+            <PendingTable tableContent={props.tableData}/>
                {/*
                 <Text style={styles.title}>Order Id: {props.orderId}</Text>
                 <View style={styles.notificationContainer}></View>

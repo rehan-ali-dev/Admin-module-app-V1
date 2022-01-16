@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
 import Colors from '../constants/Colors';
 import OrdersCard from "../components/ordersCard";
@@ -8,10 +8,27 @@ import NotificationCardHome from "../components/NotificationCardHome";
 import StaffCardHome from "../components/staffCardHome";
 import PendingTable from "../components/tableComponentPending";
 import { ScrollView } from "react-native-gesture-handler";
+import IP from "../constants/IP";
 
 
 const HomeScreen=()=>{
 
+
+    const [isLoading,setLoading]=useState(true);
+    const [pendingOrders,setPendingOrders]=useState([]);
+
+    
+
+    useEffect(()=>{
+        fetch(`http://${IP.ip}:3000/order`)
+        .then((response)=>response.json())
+        .then((response)=>setPendingOrders(response))
+        .then(()=>{console.log(pendingOrders)})
+        .catch((error)=>console.error(error))
+        .finally(()=>setLoading(false));
+      },[]);
+
+    
 
     const moveToNotifications=()=>{
         props.navigation.navigate({
@@ -23,13 +40,7 @@ const HomeScreen=()=>{
           <View style={styles.screen}>
               <ScrollView>
               <OrdersCard box1="Pending" box2="Confirmed" box3="Delivered" header="Orders Summary"/>
-              <NotificationCardHome notificationTitle="Hey, Come here Its order for you!!"
-            customerFname="Dummy"
-           // customerLname={lastName}
-            orderedDish="Dummy"
-            servingSize={1}
-            timeOfOrder="dummy time"
-            notSeen
+              <NotificationCardHome tableData={pendingOrders}
             onSelect={()=>{}}/>
             <StaffCardHome/>
             </ScrollView>
@@ -38,11 +49,11 @@ const HomeScreen=()=>{
     };
 
     HomeScreen.navigationOptions=navigationData=>{
-        const moveNotifications=()=>{
+       const moveNotifications=()=>{
             navigationData.navigation.navigate({
                 routeName:'Notifications'
             })
-        }
+       }
         return{
             headerRight: ()=><HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item title="notification" iconName='ios-notifications' onPress={moveNotifications}/>
