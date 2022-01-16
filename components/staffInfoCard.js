@@ -1,10 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import { Text,View,StyleSheet,TouchableOpacity,Image,ImageBackground,Modal, Button} from 'react-native';
+import { Text,View,StyleSheet,TouchableOpacity,Image,ImageBackground,Modal,TextInput} from 'react-native';
 import Colors from "../constants/Colors";
 
 const  StaffInfoCard=props=>{
     const [isShowModal,setShowModal]=useState(false);
+    const [orderId,setOrderId]=useState('');
    
     return(
         <View style={styles.staffCard}>
@@ -27,16 +28,46 @@ const  StaffInfoCard=props=>{
             </View>
             } 
             </View>
+
+
             <Modal
-            transparent={true}
-            visible={isShowModal}>
+                transparent={true}
+                visible={isShowModal}>
                 <View style={{backgroundColor:'#000000aa',flex:1}}>
-                    <View style={{backgroundColor:'#fff',margin:50,borderRadius:10,padding:10}}>
-                    <View style={styles.staffHeader}>
+                    <View style={{backgroundColor:'#fff',margin:40,borderRadius:10,padding:10}}>
+                    <View style={styles.orderHeader}>
                     <Text style={styles.headerText}>Assign Task</Text>
                     </View>
-                    <Button title="OKey" onPress={()=>{setShowModal(false)}}></Button>
-                    </View>
+                    <Text style={styles.title}>Order Id: {props.orderId}</Text>
+                    <Text style={styles.subTitle}>Customer Name:  {props.customerName}</Text>
+                    <Text style={styles.subTitle}>Kitchen Name:  {props.kitchenName}</Text>
+                    <Text style={styles.subTitle}></Text>
+                    <Text style={styles.subTitle}>Order Id</Text>
+                    <TextInput style={{...styles.inputText,borderColor:Colors.lightBlack,
+                    borderWidth:1}} placeholder="Order Id" 
+                    value={orderId} onChangeText={(text)=>setOrderId(text)}
+                    />
+
+
+                <View style={{...styles.btnContainer,justifyContent:'space-between'}}>
+                <TouchableOpacity onPress={()=>{
+                    setShowModal(false);
+                    }}>       
+                <View style={{...styles.buttonContainer,backgroundColor:Colors.primaryLightColor}}>
+                    <Text style={styles.btnTitle}>Cancel</Text>
+                </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    console.log(`Staff Name: ${orderId}`);
+                    setShowModal(false);
+                    }}>
+                <View style={{...styles.buttonContainer}}>
+                    <Text style={styles.btnTitle}>Assign</Text>
+                </View>
+                </TouchableOpacity>
+                </View>
+
+                </View>
                 </View>
             </Modal>
         </View>
@@ -69,7 +100,16 @@ const styles=StyleSheet.create({
         marginBottom:5,
         fontWeight:'bold'
     }, 
-    
+    inputText:{
+        marginHorizontal:5,
+        marginBottom:10,
+        //borderWidth:0.5,
+        backgroundColor: '#F5FCFF',
+        padding:5,
+        paddingHorizontal:10,
+        borderRadius:10,
+        fontSize:14
+    },
 
 
 

@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity, ScrollView,Modal } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList,TextInput,TouchableOpacity, ScrollView,Modal } from "react-native";
 import Colors from '../constants/Colors';
 import ItemDetailsTable from "../components/itemsDetailsTable";
 
@@ -7,6 +7,7 @@ import ItemDetailsTable from "../components/itemsDetailsTable";
 const OrderDetailsScreen=(props)=>{
 
     const [showModal,setShowModal]=useState(false);
+    const [staffName,setStaffName]=useState('');
 
         return(
           <View style={styles.screen}>
@@ -42,11 +43,11 @@ const OrderDetailsScreen=(props)=>{
                 </View>
 
                 
-                <View style={styles.btnContainer}>
+                <View style={{...styles.btnContainer,justifyContent:'center',paddingTop:10}}>
                 <TouchableOpacity onPress={()=>{
                     setShowModal(true);
                     }}>
-                <View style={{...styles.buttonContainer}}>
+                <View style={{...styles.buttonContainer,width:180,padding:5}}>
                     <Text style={styles.btnTitle}>Assign Delivery Boy</Text>
                 </View>
                 </TouchableOpacity>
@@ -55,16 +56,46 @@ const OrderDetailsScreen=(props)=>{
              </View>
               </ScrollView> 
 
+
+
               <Modal
                 transparent={true}
                 visible={showModal}>
                 <View style={{backgroundColor:'#000000aa',flex:1}}>
-                    <View style={{backgroundColor:'#fff',margin:50,borderRadius:10,padding:10}}>
-                    <View style={styles.staffHeader}>
-                    <Text style={styles.headerText}>Assign Task</Text>
+                    <View style={{backgroundColor:'#fff',margin:40,borderRadius:10,padding:10}}>
+                    <View style={styles.orderHeader}>
+                    <Text style={styles.headerText}>Assign Delivery Boy</Text>
                     </View>
-                    <Button title="OKey" onPress={()=>{setShowModal(false)}}></Button>
-                    </View>
+                    <Text style={styles.title}>Order Id: {props.orderId}</Text>
+                    <Text style={styles.subTitle}>Customer Name:  {props.customerName}</Text>
+                    <Text style={styles.subTitle}>Kitchen Name:  {props.kitchenName}</Text>
+                    <Text style={styles.subTitle}></Text>
+                    <Text style={styles.subTitle}>Staff Name</Text>
+                    <TextInput style={{...styles.inputText,borderColor:Colors.lightBlack,
+                    borderWidth:1}} placeholder="Staff Name" 
+                    value={staffName} onChangeText={(text)=>setStaffName(text)}
+                    />
+
+
+                <View style={{...styles.btnContainer,justifyContent:'space-between'}}>
+                <TouchableOpacity onPress={()=>{
+                    setShowModal(false);
+                    }}>       
+                <View style={{...styles.buttonContainer,backgroundColor:Colors.primaryLightColor}}>
+                    <Text style={styles.btnTitle}>Cancel</Text>
+                </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    console.log(`ORder Id: ${staffName}`);
+                    setShowModal(false);
+                    }}>
+                <View style={{...styles.buttonContainer}}>
+                    <Text style={styles.btnTitle}>Assign</Text>
+                </View>
+                </TouchableOpacity>
+                </View>
+
+                </View>
                 </View>
             </Modal>
 
@@ -108,7 +139,16 @@ const styles=StyleSheet.create(
             paddingTop:10,
        },
    
-   
+       inputText:{
+        marginHorizontal:5,
+        marginBottom:10,
+        //borderWidth:0.5,
+        backgroundColor: '#F5FCFF',
+        padding:5,
+        paddingHorizontal:10,
+        borderRadius:10,
+        fontSize:14
+    },
    
        
        title:{
