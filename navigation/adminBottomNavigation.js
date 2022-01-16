@@ -18,6 +18,7 @@ import PaymentsScreen from '../screens/paymentsScreen';
 import KitchensScreen from '../screens/kitchensScreen';
 import NotificationsScreen from '../screens/notificationsScreen';
 import StaffScreen from '../screens/staffScreen';
+import OrderDetailsScreen from '../screens/orderDetailsScreen';
 
 
 const defaultNavConfiguration= {
@@ -40,7 +41,8 @@ const HomeNavigator=createStackNavigator(
 
 const OrdersNavigator=createStackNavigator(
     {
-        Orders:OrdersScreen,     
+        Orders:OrdersScreen,
+        OrderDetails: OrderDetailsScreen,    
     },defaultNavConfiguration
 );
 

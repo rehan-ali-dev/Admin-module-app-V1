@@ -6,19 +6,19 @@ import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-componen
 import { ScrollView } from "react-native-gesture-handler";
 
 const CONTENT = {
-  tableHead: ['Staff Id','Name', 'Phone'],
+  tableHead: ['Item#', 'Dish Name', 'Quantity', 'Amount'],
   tableData: [
-    ['09','Rehan Ali', '03082562292'],
-    ['0','a', 'b'],
-    ['0','1', '2'],
-    ['0','a', 'b'],
-    ['0','a', 'b'],
-    ['0','a', 'b'],
+    ['100','Chicken Karahi', '100', '5000'],
+    ['0','a', 'b', 'c'],
+    ['0','1', '2', '3'],
+    ['0','a', 'b', 'c'],
+    ['0','a', 'b', 'c'],
+    ['0','a', 'b', 'c'],
   ],
 };
 
 
-const AvailableStaffTable=()=>{
+const ItemDetailsTable=()=>{
 
     
         return(
@@ -27,16 +27,15 @@ const AvailableStaffTable=()=>{
             <Table borderStyle={{ borderWidth: 0.7 }}>
               <Row
                 data={CONTENT.tableHead}
-                flexArr={[1, 2,2]}
+                flexArr={[1, 2, 1,1]}
                 style={styles.head}
                 textStyle={styles.text}
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
                   data={CONTENT.tableData}
-                  flexArr={[1,2,2]}
+                  flexArr={[1,2,1,1]}
                   style={styles.row}
-                  onPress={()=>{console.log('')}}
                   textStyle={styles.text}
                 />
               </TableWrapper>
@@ -51,7 +50,7 @@ const AvailableStaffTable=()=>{
 
 const styles=StyleSheet.create(
     {
-        container: { flex: 1, backgroundColor: '#fff',height:150 },
+        container: { flex: 1, backgroundColor: '#fff',height:180 },
         head: { height: 35, backgroundColor: 'orange'},
         wrapper: { flexDirection: 'row' },
         row: { height: 26 },
@@ -60,4 +59,4 @@ const styles=StyleSheet.create(
     }
 )
 
-export default AvailableStaffTable;
+export default ItemDetailsTable;
