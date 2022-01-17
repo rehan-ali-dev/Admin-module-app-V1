@@ -10,7 +10,7 @@ const  StaffCardHome=props=>{
             <View style={styles.orderHeader}>
                 <Text style={styles.headerText}>Available Staff</Text>
             </View>
-            <AvailableStaffTable/>
+            <AvailableStaffTable tableContent={props.tableData}/>
         </View>
     )
 };

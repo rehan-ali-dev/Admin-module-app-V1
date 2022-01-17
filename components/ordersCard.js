@@ -12,9 +12,9 @@ const  OrdersCard=props=>{
                 <Text style={styles.headerText}>{props.header}</Text>
             </View>
             <View style={styles.boxesContainer}>
-                <OrderBox number={5} title={props.box1}/>
-                <OrderBox number={500} title={props.box2}/>
-                <OrderBox number={5} title={props.box3}/>
+                <OrderBox number={props.pending} title={props.box1}/>
+                <OrderBox number={props.confirmed} title={props.box2}/>
+                <OrderBox number={props.delivered} title={props.box3}/>
             </View>
         </View>
     )

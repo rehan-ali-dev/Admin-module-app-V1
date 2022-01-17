@@ -18,7 +18,7 @@ const CONTENT = {
 };
 
 
-const AvailableStaffTable=()=>{
+const AvailableStaffTable=(props)=>{
 
     
         return(
@@ -33,7 +33,7 @@ const AvailableStaffTable=()=>{
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
-                  data={CONTENT.tableData}
+                  data={props.tableContent}
                   flexArr={[1,2,2]}
                   style={styles.row}
                   onPress={()=>{console.log('')}}

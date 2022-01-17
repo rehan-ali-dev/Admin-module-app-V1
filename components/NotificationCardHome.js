@@ -4,6 +4,8 @@ import Colors from "../constants/Colors";
 import PendingTable from "./tableComponentPending";
 
 const  NotificationCardHome=props=>{
+
+    //console.log(props.tableData);
    
     return(
         <View style={styles.notificationCard}>

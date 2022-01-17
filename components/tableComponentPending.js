@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
 import Colors from '../constants/Colors';
 
@@ -20,6 +20,36 @@ const CONTENT = {
 
 const PendingTable=(props)=>{
 
+        let contentOfTable=[];
+        const [tableData,setTableData]=useState([]);
+
+        const getArray=async ()=>{
+          console.log(props.tableContent);
+          props.tableContent.map((row)=>{
+            console.log('Loop Runnig');
+            // let newRow=[];
+             let orderId=row.order_id;
+             let custId=row.cust_id;
+             let chefId=row.chef_id;
+             let time=row.total_amount;
+             let newRow=[orderId,custId,chefId,time];
+             contentOfTable.push(newRow);
+             console.log(`Content of Table : ${contentOfTable}`);
+             setTableData(contentOfTable);
+          })
+            
+        }
+
+        /*
+        useEffect(()=>{
+          
+          getArray().then(()=>{
+               console.log("FunctionCalled");
+          })
+         
+        },[]);*/
+  
+
     
         return(
             <View style={styles.container}>
@@ -33,23 +63,12 @@ const PendingTable=(props)=>{
               /> 
               <TableWrapper style={styles.wrapper}>
 
-              {
-              props.tableContent.map((order,order_id) => {
-              <Row
-              key={order_id}
-              data={order.values}
-                style={styles.row}
-                flexArr={[1,2,2,1.5]}
-        />
-      })
-    }
-
-                {/*<Rows
+                <Rows
                   data={props.tableContent}
                   flexArr={[1,2,2,1.5]}
                   style={styles.row}
                   textStyle={styles.text}
-                />*/}
+                />
               </TableWrapper>
               
             </Table>

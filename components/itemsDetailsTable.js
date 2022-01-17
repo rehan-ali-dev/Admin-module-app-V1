@@ -1,6 +1,7 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
 import Colors from '../constants/Colors';
+import IP from "../constants/IP";
 
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 import { ScrollView } from "react-native-gesture-handler";
@@ -18,8 +19,34 @@ const CONTENT = {
 };
 
 
-const ItemDetailsTable=()=>{
+const ItemDetailsTable=(props)=>{
 
+    const [items,setItems]=useState([]);
+    const [orderedItems,setOrderedItems]=useState([]);
+
+    useEffect(()=>{
+        const orderId=props.orderID;
+        fetch(`http://${IP.ip}:3000/orderDetail/orderedDishes/${orderId}`)
+        .then((response)=>response.json())
+        .then((response)=>setItems(response))
+        .then(()=>{
+            console.log(`Fetched ITems :${items}`)
+            let itemsArray=[];
+            items.map((row)=>{
+                let dishId=row.dish_id;
+                let dishName=row.dish_name;
+                let quantity=row.quantity;
+                let totalAmount=row.total_amount;
+                let newRow=[dishId,dishName,quantity,totalAmount];
+                itemsArray.push(newRow);   
+                setOrderedItems(itemsArray); 
+            })
+            setOrderedItems(itemsArray);
+        })
+        .catch((error)=>console.error(error))
+        
+        
+      },[]);
     
         return(
             <View style={styles.container}>
@@ -33,7 +60,7 @@ const ItemDetailsTable=()=>{
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
-                  data={CONTENT.tableData}
+                  data={orderedItems}
                   flexArr={[1,2,1,1]}
                   style={styles.row}
                   textStyle={styles.text}
@@ -50,7 +77,7 @@ const ItemDetailsTable=()=>{
 
 const styles=StyleSheet.create(
     {
-        container: { flex: 1, backgroundColor: '#fff',height:180 },
+        container: { flex: 1, backgroundColor: '#fff' },
         head: { height: 35, backgroundColor: 'orange'},
         wrapper: { flexDirection: 'row' },
         row: { height: 26 },

@@ -7,18 +7,18 @@ const  OrderCardOrders=props=>{
     return(
         <View style={styles.notificationCard}>
                 <View style={styles.notificationContainer}>
-                <Text style={styles.title}>Order Id: {props.orderId}</Text>
-                <Text style={styles.timeZone}>Time{props.orderedTime}</Text>
+                <Text style={styles.title}>Order Id: #{props.orderId}</Text>
+                <Text style={styles.timeZone}>Time</Text>
                 </View> 
-                <Text style={styles.subTitle}>Order by:  {props.customerName}</Text>
-                <Text style={styles.subTitle}>Order to:  {props.kitchenName}</Text>
+                <Text style={styles.subTitle}>Order by:  {props.orderBy}</Text>
+                <Text style={styles.subTitle}>Order to:  {props.orderTo}</Text>
                 <Text style={styles.subTitle}>Total Amount:  {props.totalAmount}</Text>
                 <View style={styles.notificationContainer}>
 
                
                 <Text style={styles.subTitle}>Current Status:  {props.currentStatus}</Text>
 
-            {props.notDelivered &&
+            {props.currentStatus==='pending' &&
             <View style={styles.btnContainer}>
             <TouchableOpacity onPress={props.onSelect}>
                 <View style={{...styles.buttonContainer}}>

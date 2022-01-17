@@ -1,45 +1,82 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import { View,Text,StyleSheet, Button, FlatList,TextInput,TouchableOpacity, ScrollView,Modal } from "react-native";
 import Colors from '../constants/Colors';
 import ItemDetailsTable from "../components/itemsDetailsTable";
+import IP from "../constants/IP";
 
 
 const OrderDetailsScreen=(props)=>{
 
     const [showModal,setShowModal]=useState(false);
     const [staffName,setStaffName]=useState('');
+    const [customerData,setCustomerData]=useState([]);
+    const [kitchenData,setKitchenData]=useState([]);
+    const [subTotal,setSubTotal]=useState(0);
+    const [deliveryCharges,setDeliveryCharges]=useState(0);
+    const [grandTotal,setGrandTotal]=useState(0);
+
+    const orderId=props.navigation.getParam('orderId');
+    const customerId=props.navigation.getParam('customerId');
+    const chefId=props.navigation.getParam('chefId');
+    const currentStatus=props.navigation.getParam('currentStatus');
+    const placedTime=props.navigation.getParam('time');
+
+
+    useEffect(()=>{
+        fetch(`http://${IP.ip}:3000/customer/${customerId}`)
+        .then((response)=>response.json())
+        .then((response)=>setCustomerData(response[0]))
+        .then(()=>{
+            fetch(`http://${IP.ip}:3000/chef/${chefId}`)
+            .then((response)=>response.json())
+            .then((response)=>setKitchenData(response[0]))
+        })
+        .then(()=>{
+            fetch(`http://${IP.ip}:3000/orderDetail/sum/${orderId}`)
+            .then((response)=>response.json())
+            .then((response)=>
+            {setSubTotal(response[0].subTotal);
+             setDeliveryCharges(response[0].totalItems*20);
+             setGrandTotal(subTotal+deliveryCharges);
+            })
+        })
+        .catch((error)=>console.error(error))
+       
+      },[]);
+
+
 
         return(
           <View style={styles.screen}>
               <ScrollView>
                 <View style={styles.orderDetailsContainer}>
                 <View style={styles.orderSubcontainer}>
-                <Text style={styles.title}>Order Id: {props.orderId}</Text>
+                <Text style={styles.title}>Order Id: #{orderId}</Text>
                 <Text style={styles.timeZone}>Time{props.orderedTime}</Text>
                 </View> 
-                <Text style={styles.subTitle}>Customer Name:  {props.customerName}</Text>
-                <Text style={styles.subTitle}>Customer Phone:  {props.customerName}</Text>
-                <Text style={styles.subTitle}>Kitchen Name:  {props.kitchenName}</Text>
-                <Text style={styles.subTitle}>Kitchen Phone:  {props.kitchenName}</Text>
-                <Text style={styles.subTitle}>Current Status:  {props.currentStatus}</Text>
-                <Text style={styles.subTitle}>Orderd Placed:{props.orderedTime}</Text>
+                <Text style={styles.subTitle}>Customer Name: {customerData.firstname} {customerData.lastname}</Text>
+                <Text style={styles.subTitle}>Customer Phone: {customerId}</Text>
+                <Text style={styles.subTitle}>Kitchen Name:  {kitchenData.kitchen_name}</Text>
+                <Text style={styles.subTitle}>Kitchen Phone:  {chefId}</Text>
+                <Text style={styles.subTitle}>Current Status:  {currentStatus}</Text>
+                <Text style={styles.subTitle}>Orderd Placed:{placedTime}</Text>
                                 
 
                 <Text style={styles.headerText}>Items Details</Text>
-                <ItemDetailsTable/>
+                <ItemDetailsTable orderID={orderId}/>
                 <View style={{...styles.orderSubcontainer,paddingTop:15}}>
                 <Text style={styles.subTitle}>Sub Total</Text>
-                <Text style={styles.subTitle}>Rs.2000</Text>
+                <Text style={styles.subTitle}>Rs.{subTotal}</Text>
                 </View>
 
                 <View style={styles.orderSubcontainer}>
                 <Text style={styles.subTitle}>Delivery Charges</Text>
-                <Text style={styles.subTitle}>Rs.100</Text>
+                <Text style={styles.subTitle}>Rs.{deliveryCharges}</Text>
                 </View>
 
                 <View style={styles.orderSubcontainer}>
                 <Text style={styles.title}>Grand Total</Text>
-                <Text style={styles.title}>Rs.3000</Text>
+                <Text style={styles.title}>Rs.{subTotal+deliveryCharges}</Text>
                 </View>
 
                 
