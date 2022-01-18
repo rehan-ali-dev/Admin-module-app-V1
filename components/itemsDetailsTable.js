@@ -23,6 +23,7 @@ const ItemDetailsTable=(props)=>{
 
     const [items,setItems]=useState([]);
     const [orderedItems,setOrderedItems]=useState([]);
+    const [refreshing,setRefreshing]=useState(true);
 
     useEffect(()=>{
         const orderId=props.orderID;
@@ -43,10 +44,11 @@ const ItemDetailsTable=(props)=>{
             })
             setOrderedItems(itemsArray);
         })
+        .then(()=>setRefreshing(false))
         .catch((error)=>console.error(error))
         
         
-      },[]);
+      },[refreshing]);
     
         return(
             <View style={styles.container}>

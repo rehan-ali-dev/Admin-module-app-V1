@@ -1,16 +1,18 @@
 import React,{useState,useEffect} from "react";
-import { View,Text,StyleSheet, Button, FlatList,TextInput,TouchableOpacity, ScrollView,Modal } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList,TextInput,TouchableOpacity, ScrollView,Modal,ToastAndroid } from "react-native";
 import Colors from '../constants/Colors';
 import ItemDetailsTable from "../components/itemsDetailsTable";
+
 import IP from "../constants/IP";
 
 
 const OrderDetailsScreen=(props)=>{
 
     const [showModal,setShowModal]=useState(false);
-    const [staffName,setStaffName]=useState('');
+    const [staffId,setStaffId]=useState('');
     const [customerData,setCustomerData]=useState([]);
     const [kitchenData,setKitchenData]=useState([]);
+    const [availableStaffNames,setAvailableStaffNames]=useState([]);
     const [subTotal,setSubTotal]=useState(0);
     const [deliveryCharges,setDeliveryCharges]=useState(0);
     const [grandTotal,setGrandTotal]=useState(0);
@@ -40,9 +42,40 @@ const OrderDetailsScreen=(props)=>{
              setGrandTotal(subTotal+deliveryCharges);
             })
         })
+        ////// working
+        .then(()=>{
+            fetch(`http://${IP.ip}:3000/staff/available/staffName`)
+            .then((response)=>response.json())
+            .then((response)=>
+            {setAvailableStaffNames(response);
+            })
+        })
         .catch((error)=>console.error(error))
        
       },[]);
+
+
+
+
+      /////////  Function Assigning Task
+      const assignTask=(orderId,staffId)=>{
+        let url=`http://${IP.ip}:3000/order/update/${orderId}`;
+        let data={
+            status:'ready to deliver',
+            staff_id:staffId
+        }
+        fetch(url,{
+            method:'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .then(()=>ToastAndroid.show(`Task Assigned Successfully`, ToastAndroid.SHORT))
+        .catch((error)=>console.error(error))
+        
+      }
 
 
 
@@ -99,21 +132,21 @@ const OrderDetailsScreen=(props)=>{
                 transparent={true}
                 visible={showModal}>
                 <View style={{backgroundColor:'#000000aa',flex:1}}>
-                    <View style={{backgroundColor:'#fff',margin:40,borderRadius:10,padding:10}}>
+                    <View style={{backgroundColor:'#fff',margin:40,marginTop:120,borderRadius:10,padding:10}}>
                     <View style={styles.orderHeader}>
                     <Text style={styles.headerText}>Assign Delivery Boy</Text>
                     </View>
-                    <Text style={styles.title}>Order Id: {props.orderId}</Text>
-                    <Text style={styles.subTitle}>Customer Name:  {props.customerName}</Text>
-                    <Text style={styles.subTitle}>Kitchen Name:  {props.kitchenName}</Text>
+                    <Text style={styles.title}>Order Id: #{orderId}</Text>
+                    <Text style={styles.subTitle}>Customer Name:  {customerData.firstname} {customerData.lastname}</Text>
+                    <Text style={styles.subTitle}>Kitchen Name:  {kitchenData.kitchen_name}</Text>
                     <Text style={styles.subTitle}></Text>
-                    <Text style={styles.subTitle}>Staff Name</Text>
+                    <Text style={styles.subTitle}>Staff Id</Text>
+                    
                     <TextInput style={{...styles.inputText,borderColor:Colors.lightBlack,
-                    borderWidth:1}} placeholder="Staff Name" 
-                    value={staffName} onChangeText={(text)=>setStaffName(text)}
+                    borderWidth:1}} placeholder="Staff Id" 
+                    value={staffId} onChangeText={(text)=>setStaffId(text)}
                     />
-
-
+                 
                 <View style={{...styles.btnContainer,justifyContent:'space-between'}}>
                 <TouchableOpacity onPress={()=>{
                     setShowModal(false);
@@ -123,7 +156,8 @@ const OrderDetailsScreen=(props)=>{
                 </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>{
-                    console.log(`ORder Id: ${staffName}`);
+                    assignTask(orderId,staffId);
+                    console.log(`Staff Id: ${staffId}`);
                     setShowModal(false);
                     }}>
                 <View style={{...styles.buttonContainer}}>

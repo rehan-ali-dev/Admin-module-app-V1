@@ -1,5 +1,6 @@
 import React,{useEffect,useState} from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,RefreshControl } from "react-native";
+import * as Notifications from 'expo-notifications';
 import Colors from '../constants/Colors';
 import OrdersCard from "../components/ordersCard";
 import { HeaderButtons,Item } from "react-navigation-header-buttons";
@@ -15,6 +16,7 @@ const HomeScreen=(props)=>{
 
 
     const [isLoading,setLoading]=useState(true);
+    const [refreshing, setRefreshing] = useState(true);
     const [pendingOrders,setPendingOrders]=useState([]);
     const [tableData,setTableData]=useState([]);
     const [pendingCounts,setPendingCounts]=useState(0);
@@ -23,9 +25,21 @@ const HomeScreen=(props)=>{
     const [staff,setStaff]=useState([]);
     const [availableStaff,setAvailableStaff]=useState([]);
     const [staffTableData,setStaffTableData]=useState([]);
+    let AdminToken;
 
 
     
+    useEffect(()=>{
+        Notifications.getExpoPushTokenAsync()
+        .then(response=>{
+          console.log(response);
+          AdminToken=response.data;
+          console.log(AdminToken);
+        })
+        .catch((error)=>console.error(error))
+      },[]);
+
+
     
 
     useEffect(()=>{
@@ -57,9 +71,11 @@ const HomeScreen=(props)=>{
                  let newRow=[staffId,name,phone];
                  staffArray.push(newRow);       
         })
-        })
+        }).then(()=>setRefreshing(false))
         .then(()=>setStaffTableData(staffArray))
+
         })
+        
 
 
         .then(()=>{
@@ -78,7 +94,7 @@ const HomeScreen=(props)=>{
         })
         .catch((error)=>console.error(error))
         .finally(()=>setLoading(false));
-      },[]);
+      },[refreshing]);
 
     
 
@@ -90,6 +106,7 @@ const HomeScreen=(props)=>{
     
         return(
           <View style={styles.screen}>
+              {/* refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>} */}
               <ScrollView>
               <OrdersCard pending={pendingCounts} box1="Pending" confirmed={confirmedCounts} box2="Confirmed" delivered={deliveredCounts} box3="Delivered" header="Orders Summary"/>
               <NotificationCardHome tableData={tableData}
