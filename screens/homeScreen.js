@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,RefreshControl } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,RefreshControl} from "react-native";
 import * as Notifications from 'expo-notifications';
 import Colors from '../constants/Colors';
 import OrdersCard from "../components/ordersCard";
