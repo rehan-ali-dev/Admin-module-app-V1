@@ -45,7 +45,7 @@ const HomeScreen=(props)=>{
     useEffect(()=>{
         let dataArray=[];
         let staffArray=[];
-        fetch(`http://${IP.ip}:3000/order`)
+        fetch(`http://${IP.ip}:3000/order/status/pending`)
         .then((response)=>response.json())
         .then((response)=>setPendingOrders(response))
         .then(()=>{
@@ -60,7 +60,7 @@ const HomeScreen=(props)=>{
         })
         .then(()=>setTableData(dataArray))
         .then(()=>{
-            fetch(`http://${IP.ip}:3000/staff/available`)
+            fetch(`http://${IP.ip}:3000/staff/1`)
         .then((response)=>response.json())
         .then((response)=>setStaff(response))
         .then(()=>{

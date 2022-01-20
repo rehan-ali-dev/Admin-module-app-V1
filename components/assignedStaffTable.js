@@ -18,7 +18,7 @@ const CONTENT = {
 };
 
 
-const AssignedStaffTable=()=>{
+const AssignedStaffTable=(props)=>{
 
     
         return(
@@ -33,7 +33,8 @@ const AssignedStaffTable=()=>{
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
-                  data={CONTENT.tableData}
+                  //data={CONTENT.tableData}
+                  data={props.tableData}
                   flexArr={[1,2,2,1]}
                   style={styles.row}
                   onPress={()=>{console.log('')}}

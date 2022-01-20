@@ -55,6 +55,22 @@ const OrderDetailsScreen=(props)=>{
       },[]);
 
 
+      ///  Function to change availability status of staff
+      const changeStaffAvailabilityStatus=(staffId,availability)=>{
+        let url=`http://${IP.ip}:3000/staff/updateStaff/${staffId}`;
+        let data={
+            status:availability,
+        }
+        fetch(url,{
+            method:'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .catch((error)=>console.error(error));
+      } 
 
 
       /////////  Function Assigning Task
@@ -72,6 +88,7 @@ const OrderDetailsScreen=(props)=>{
               },
             body:JSON.stringify(data)
         }).then((response)=>response.json())
+        .then(()=>changeStaffAvailabilityStatus(staffId,0))
         .then(()=>ToastAndroid.show(`Task Assigned Successfully`, ToastAndroid.SHORT))
         .catch((error)=>console.error(error))
         

@@ -8,7 +8,7 @@ const  OrderCardOrders=props=>{
         <View style={styles.notificationCard}>
                 <View style={styles.notificationContainer}>
                 <Text style={styles.title}>Order Id: #{props.orderId}</Text>
-                <Text style={styles.timeZone}>Time</Text>
+                <Text style={styles.timeZone}></Text>
                 </View> 
                 <Text style={styles.subTitle}>Order by:  {props.orderBy}</Text>
                 <Text style={styles.subTitle}>Order to:  {props.orderTo}</Text>
@@ -18,11 +18,21 @@ const  OrderCardOrders=props=>{
                
                 <Text style={styles.subTitle}>Current Status:  {props.currentStatus}</Text>
 
-            {props.currentStatus==='pending' &&
+            {(props.currentStatus==='pending' || props.currentStatus==='confirmed')  &&
             <View style={styles.btnContainer}>
             <TouchableOpacity onPress={props.onSelect}>
                 <View style={{...styles.buttonContainer}}>
                     <Text style={styles.btnTitle}>View Details</Text>
+                </View>
+            </TouchableOpacity>
+            </View>
+            } 
+
+            {props.currentStatus==='ready to deliver'  &&
+            <View style={styles.btnContainer}>
+            <TouchableOpacity onPress={props.onDelivered}>
+                <View style={{...styles.buttonContainer}}>
+                    <Text style={styles.btnTitle}>New Update</Text>
                 </View>
             </TouchableOpacity>
             </View>
