@@ -52,7 +52,7 @@ const AssignedStaffTable=(props)=>{
 
 const styles=StyleSheet.create(
     {
-        container: { flex: 1, backgroundColor: '#fff',height:180,marginHorizontal:10 },
+        container: { flex: 1, backgroundColor: '#fff',marginHorizontal:10 },
         head: { height: 35, backgroundColor: 'orange'},
         wrapper: { flexDirection: 'row' },
         row: { height: 26 },

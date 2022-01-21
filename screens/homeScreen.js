@@ -106,8 +106,8 @@ const HomeScreen=(props)=>{
     
         return(
           <View style={styles.screen}>
-              {/* refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>} */}
-              <ScrollView>
+              
+              <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}>
               <OrdersCard pending={pendingCounts} box1="Pending" confirmed={confirmedCounts} box2="Confirmed" delivered={deliveredCounts} box3="Delivered" header="Orders Summary"/>
               <NotificationCardHome tableData={tableData}
             onSelect={()=>{}}/>

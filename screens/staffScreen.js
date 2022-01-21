@@ -1,5 +1,5 @@
 import React from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
 import { useEffect, useState } from "react";
 import AssignedStaffTable from "../components/assignedStaffTable";
@@ -40,15 +40,17 @@ const StaffScreen=()=>{
               <View style={styles.staffHeader}>
                 <Text style={styles.staffHeaderText}>Assigned Staff</Text>
             </View>
-            <ScrollView>
+            <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}>
               <AssignedStaffTable tableData={assignedStaffData}/>
             </ScrollView>
+            {/** 
             <View>
             <View style={styles.staffHeader}>
                 <Text style={styles.staffHeaderText}>Staff Record</Text>
             </View>
                 <StaffInfoCard available/>
             </View>
+            */}
              
           </View>
         )

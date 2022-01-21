@@ -176,10 +176,11 @@ const OrderDetailsScreen=(props)=>{
                     assignTask(orderId,staffId);
                     console.log(`Staff Id: ${staffId}`);
                     setShowModal(false);
-                    props.navigation.navigate({
+                    /*props.navigation.navigate({
                         routeName:'Orders',
                        
-                    })
+                    })*/
+                    props.navigation.goBack();
                     }}>
                 <View style={{...styles.buttonContainer}}>
                     <Text style={styles.btnTitle}>Assign</Text>

@@ -1,8 +1,9 @@
-import React,{useEffect,useState} from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert } from "react-native";
+import React,{useCallback, useEffect,useState} from "react";
+import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
 import IP from "../constants/IP";
 import OrderCardOrders from "../components/orderCardOrdersScreen";
+
 
 
 const OrdersScreen=(props)=>{
@@ -11,16 +12,25 @@ const OrdersScreen=(props)=>{
     const [showModal,setShowModal]=useState(false);
     const [deliveredOrderDetails,setDeliveredOrderDetails]=useState('');
     const [refreshScreen,setRefreshScreen]=useState(false);
+    const [refreshing,setRefreshing]=useState(false);
    
+
+    
+
 
     useEffect(()=>{
         fetch(`http://${IP.ip}:3000/order/ordersForAdmin`)
         .then((response)=>response.json())
         .then((response)=>setOrdersData(response))
         .then(()=>{setRefreshScreen(false)})
+        .then(()=>console.log("running"))
         .catch((error)=>console.error(error))
        
       },[refreshScreen]);
+      //orderData placed here as dependency
+
+
+       
 
       const getDeliveredOrderDetails=(orderId)=>{
         fetch(`http://${IP.ip}:3000/order/orderRecord/${orderId}`)
@@ -89,7 +99,9 @@ const OrdersScreen=(props)=>{
         return(
           <View style={styles.screen}>
               <FlatList data={ordersData} renderItem={renderOrderCard} keyExtractor={(item)=>item.order_id}
-            showsVerticalScrollIndicator={false}/>
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshScreen} onRefresh={()=>{setRefreshScreen(true)}}/>}
+            />
 
 
             <Modal
