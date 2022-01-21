@@ -12,8 +12,8 @@ const  CollectionsCard=props=>{
                 <Text style={styles.headerText}>{props.header}</Text>
             </View>
             <View style={styles.boxesContainer}>
-                <OrderBox number={5000} title={props.box1}/>
-                <OrderBox number={500} title={props.box2}/>
+                <OrderBox number={props.totalCollection} title={props.box1}/>
+                <OrderBox number={props.totalCharges} title={props.box2}/>
             </View>
         </View>
     )

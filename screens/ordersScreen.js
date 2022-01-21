@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert } from "react-native";
 import Colors from '../constants/Colors';
 import IP from "../constants/IP";
 import OrderCardOrders from "../components/orderCardOrdersScreen";
@@ -9,14 +9,42 @@ const OrdersScreen=(props)=>{
 
     const [ordersData,setOrdersData]=useState([]);
     const [showModal,setShowModal]=useState(false);
+    const [deliveredOrderDetails,setDeliveredOrderDetails]=useState('');
+    const [refreshScreen,setRefreshScreen]=useState(false);
+   
 
     useEffect(()=>{
         fetch(`http://${IP.ip}:3000/order/ordersForAdmin`)
         .then((response)=>response.json())
         .then((response)=>setOrdersData(response))
+        .then(()=>{setRefreshScreen(false)})
         .catch((error)=>console.error(error))
        
-      },[]);
+      },[refreshScreen]);
+
+      const getDeliveredOrderDetails=(orderId)=>{
+        fetch(`http://${IP.ip}:3000/order/orderRecord/${orderId}`)
+        .then((response)=>response.json())
+        .then((response)=>setDeliveredOrderDetails(response[0]))
+        .catch((error)=>console.error(error))
+      }
+
+       /////////  Function to update the status of order 
+       const updateOrderStatus=(orderId)=>{
+        let url=`http://${IP.ip}:3000/order/updateStatus/${orderId}`;
+        let data={
+            status:'delivered',
+        }
+        fetch(url,{
+            method:'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .catch((error)=>console.error(error))   
+      }
 
     
       const renderOrderCard=(itemData)=>{     
@@ -38,16 +66,25 @@ const OrdersScreen=(props)=>{
                       time:itemData.item.time
                   }
                   });
+              
             }}
 
             onDelivered={()=>{
                 console.log("update button working");
+                getDeliveredOrderDetails(itemData.item.order_id);
                 setShowModal(true);
             }}
             
             />
         )
       }
+
+      const showAlert=(orderId,amount,name)=>{
+        Alert.alert("Order Delivered!",`Order# : ${orderId}\nRecieved Amount : ${amount}\nOrder Status: Delivered\nStaff Name : ${name}\n Availability Status: Available `,[{
+            text:'Okey!',
+            style:'cancel'
+        }]);
+    }
 
         return(
           <View style={styles.screen}>
@@ -61,20 +98,20 @@ const OrdersScreen=(props)=>{
                 <View style={{backgroundColor:'#000000aa',flex:1}}>
                     <View style={{backgroundColor:'#fff',margin:30,marginTop:120,borderRadius:10,padding:10}}>
                     <View style={styles.orderHeader}>
-                    <Text style={styles.headerText}>Assign Delivery Boy</Text>
+                    <Text style={styles.headerText}>Update Order Status</Text>
                     </View>
-                    <Text style={styles.title}>Order Id: #</Text>
-                    <Text style={styles.subTitle}>Customer Name:</Text>
-                    <Text style={styles.subTitle}>Kitchen Name:</Text>
-                    <Text style={styles.subTitle}></Text>
-                    <Text style={styles.subTitle}>Staff Id</Text>
+                    <Text style={styles.title}>Order Id: #{deliveredOrderDetails.order_id}</Text>
+                    <Text style={styles.subTitle}>Customer Name: {deliveredOrderDetails.customer}</Text>
+                    <Text style={styles.subTitle}>Kitchen Name: {deliveredOrderDetails.kitchen}</Text>
+                    <Text style={styles.subTitle}>Staff Name: {deliveredOrderDetails.staff}</Text>
+                    <Text style={styles.subTitle}>Total Amount: {deliveredOrderDetails.total_amount}</Text>
                     {/* 
                     <TextInput style={{...styles.inputText,borderColor:Colors.lightBlack,
                     borderWidth:1}} placeholder="Staff Id" 
                     value={staffId} onChangeText={(text)=>console.log(text)}
                     />*/}
                  
-                <View style={{...styles.btnContainer,justifyContent:'space-between'}}>
+                <View style={{...styles.btnContainer,justifyContent:'space-between',paddingTop:10}}>
                 <TouchableOpacity onPress={()=>{
                     setShowModal(false);
                     }}>       
@@ -86,9 +123,13 @@ const OrdersScreen=(props)=>{
                     //assignTask(orderId,staffId);
                     console.log(`Staff Id`);
                     setShowModal(false);
+                    updateOrderStatus(deliveredOrderDetails.order_id);
+                    showAlert(deliveredOrderDetails.order_id,deliveredOrderDetails.total_amount,deliveredOrderDetails.staff);
+                    setRefreshScreen(true);
+                    
                     }}>
                 <View style={{...styles.buttonContainer}}>
-                    <Text style={styles.btnTitle}>Assign</Text>
+                    <Text style={styles.btnTitle}>Mark Delivered</Text>
                 </View>
                 </TouchableOpacity>
                 </View>
@@ -136,7 +177,7 @@ const styles=StyleSheet.create(
             justifyContent:'center',
             alignItems:'center',
             padding:3,
-            width:100,
+            width:130,
             marginHorizontal:5,
             marginBottom:5,
             borderRadius:10
