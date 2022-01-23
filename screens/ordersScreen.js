@@ -23,7 +23,7 @@ const OrdersScreen=(props)=>{
 
 
     useEffect(()=>{
-        fetch(`http://${IP.ip}:3000/order/ordersForAdmin`)
+        fetch(`http://${IP.ip}:3000/order/names/ordersForAdmin`)
         .then((response)=>response.json())
         .then((response)=>setOrdersData(response))
         .then(()=>{setRefreshScreen(false)})
@@ -102,8 +102,8 @@ const OrdersScreen=(props)=>{
         return(
             <OrderCardOrders
             orderId={itemData.item.order_id}
-            orderBy={itemData.item.cust_id}
-            orderTo={itemData.item.chef_id}
+            orderBy={itemData.item.firstname}
+            orderTo={itemData.item.kitchen_name}
             totalAmount={itemData.item.total_amount}
             currentStatus={itemData.item.status}
             onSelect={()=>{
