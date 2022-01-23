@@ -9,7 +9,7 @@ const NotificationsScreen=()=>{
     
         return(
           <View style={styles.screen}>
-              <Text>Profile Screen</Text>
+              <Text>Notifications Screen</Text>
           </View>
         )
     };

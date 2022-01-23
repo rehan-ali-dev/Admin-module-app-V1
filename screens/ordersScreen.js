@@ -2,6 +2,7 @@ import React,{useCallback, useEffect,useState} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
 import IP from "../constants/IP";
+import OrdersCard from '../components/ordersCard';
 import OrderCardOrders from "../components/orderCardOrdersScreen";
 
 
@@ -13,6 +14,9 @@ const OrdersScreen=(props)=>{
     const [deliveredOrderDetails,setDeliveredOrderDetails]=useState('');
     const [refreshScreen,setRefreshScreen]=useState(false);
     const [refreshing,setRefreshing]=useState(false);
+    const [pendingCounts,setPendingCounts]=useState(0);
+    const [confirmedCounts,setConfirmedCounts]=useState(0);
+    const [deliveredCounts,setDeliveredCounts]=useState(0);
    
 
     
@@ -24,6 +28,20 @@ const OrdersScreen=(props)=>{
         .then((response)=>setOrdersData(response))
         .then(()=>{setRefreshScreen(false)})
         .then(()=>console.log("running"))
+        .then(()=>{
+            fetch(`http://${IP.ip}:3000/orderCounts/pending`)
+            .then((response)=>response.json())
+            .then((response)=>setPendingCounts(response[0].pendingOrders));
+
+            fetch(`http://${IP.ip}:3000/orderCounts/confirmed`)
+            .then((response)=>response.json())
+            .then((response)=>setConfirmedCounts(response[0].confirmedOrders));
+
+            fetch(`http://${IP.ip}:3000/orderCounts/delivered`)
+            .then((response)=>response.json())
+            .then((response)=>setDeliveredCounts(response[0].deliveredOrders));
+
+        })
         .catch((error)=>console.error(error))
        
       },[refreshScreen]);
@@ -53,8 +71,31 @@ const OrdersScreen=(props)=>{
               },
             body:JSON.stringify(data)
         }).then((response)=>response.json())
+        .then(()=>sendNotificationToChef(orderId))
         .catch((error)=>console.error(error))   
       }
+
+      // Send Delivered Notification to crossponding Chef
+      const sendNotificationToChef=(orderId)=>{
+
+                fetch('https://exp.host/--/api/v2/push/send',{
+                        method:'POST',
+                        headers:{
+                            'Accept':'application/json',
+                            'Accept-Encoding':'gzip,deflate',
+                            'Content-Type':'application/json'
+                        },
+                        body: JSON.stringify({
+                            to:'ExponentPushToken[-4WJz5C4pXrrGDKP9hB1hW]',
+                            title:'Order Delivered Made By You',
+                            body:`Recently Delivered Order Id: #${orderId}`,  
+                            experienceId: "@rehan.ali/chef-module-V1",
+                        })
+                    }).then(()=>{
+                        console.log("Notification Sent to Chef")
+                    })
+                    .catch((error)=>console.error(error)) 
+                }
 
     
       const renderOrderCard=(itemData)=>{     
@@ -98,6 +139,7 @@ const OrdersScreen=(props)=>{
 
         return(
           <View style={styles.screen}>
+            <OrdersCard pending={pendingCounts} box1="Pending" confirmed={confirmedCounts} box2="Confirmed" delivered={deliveredCounts} box3="Delivered" header="Orders Summary"/>
               <FlatList data={ordersData} renderItem={renderOrderCard} keyExtractor={(item)=>item.order_id}
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl refreshing={refreshScreen} onRefresh={()=>{setRefreshScreen(true)}}/>}

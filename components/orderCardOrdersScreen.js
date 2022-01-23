@@ -18,7 +18,7 @@ const  OrderCardOrders=props=>{
                
                 <Text style={styles.subTitle}>Current Status:  {props.currentStatus}</Text>
 
-            {(props.currentStatus==='pending' || props.currentStatus==='confirmed')  &&
+            {(props.currentStatus==='confirmed')  &&
             <View style={styles.btnContainer}>
             <TouchableOpacity onPress={props.onSelect}>
                 <View style={{...styles.buttonContainer}}>
