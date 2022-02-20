@@ -4,9 +4,10 @@ import Colors from '../constants/Colors';
 
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 import { ScrollView } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 
 const CONTENT = {
-  tableHead: ['#Id', 'Customer', 'Chef', 'Ordered Time'],
+  tableHead: ['#Id', 'Customer', 'Kitchen', 'Amount'],
   tableData: [
     ['100','03082562292', '03082562292', '09:08'],
     ['0','a', 'b', 'c'],
@@ -21,34 +22,9 @@ const CONTENT = {
 const PendingTable=(props)=>{
 
         let contentOfTable=[];
+       
         const [tableData,setTableData]=useState([]);
-
-        const getArray=async ()=>{
-          console.log(props.tableContent);
-          props.tableContent.map((row)=>{
-            console.log('Loop Runnig');
-            // let newRow=[];
-             let orderId=row.order_id;
-             let custId=row.cust_id;
-             let chefId=row.chef_id;
-             let time=row.total_amount;
-             let newRow=[orderId,custId,chefId,time];
-             contentOfTable.push(newRow);
-             console.log(`Content of Table : ${contentOfTable}`);
-             setTableData(contentOfTable);
-          })
-            
-        }
-
-        /*
-        useEffect(()=>{
-          
-          getArray().then(()=>{
-               console.log("FunctionCalled");
-          })
-         
-        },[]);*/
-  
+    
 
     
         return(
@@ -57,7 +33,7 @@ const PendingTable=(props)=>{
             <Table borderStyle={{ borderWidth: 0.7 }}>
               <Row
                 data={CONTENT.tableHead}
-                flexArr={[1, 2, 2, 1.5]}
+                flexArr={[1, 1.8, 3, 1.2]}
                 style={styles.head}
                 textStyle={styles.text}
               /> 
@@ -65,7 +41,7 @@ const PendingTable=(props)=>{
 
                 <Rows
                   data={props.tableContent}
-                  flexArr={[1,2,2,1.5]}
+                  flexArr={[1,1.8,3,1.2]}
                   style={styles.row}
                   textStyle={styles.text}
                 />

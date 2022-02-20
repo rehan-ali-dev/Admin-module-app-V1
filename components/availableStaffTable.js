@@ -1,7 +1,7 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
 import Colors from '../constants/Colors';
-
+import { useSelector } from "react-redux";
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -20,6 +20,7 @@ const CONTENT = {
 
 const AvailableStaffTable=(props)=>{
 
+          
     
         return(
             <View style={styles.container}>
@@ -33,7 +34,7 @@ const AvailableStaffTable=(props)=>{
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
-                  data={props.tableContent}
+                data={props.tableContent}
                   flexArr={[1,2,2]}
                   style={styles.row}
                   onPress={()=>{console.log('')}}

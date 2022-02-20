@@ -8,25 +8,26 @@ import CustomHeaderButton from "../components/customHeaderButton";
 import NotificationCardHome from "../components/NotificationCardHome";
 import StaffCardHome from "../components/staffCardHome";
 import PendingTable from "../components/tableComponentPending";
+import { useDispatch,useSelector } from "react-redux";
+import { getOrderCounts,getOrderData,getStaffData,getAmountData } from "../store/actions/adminActions";
 import { ScrollView } from "react-native-gesture-handler";
 import IP from "../constants/IP";
 
 
 const HomeScreen=(props)=>{
 
-
-    const [isLoading,setLoading]=useState(true);
     const [refreshing, setRefreshing] = useState(true);
-    const [pendingOrders,setPendingOrders]=useState([]);
-    const [tableData,setTableData]=useState([]);
-    const [pendingCounts,setPendingCounts]=useState(0);
-    const [confirmedCounts,setConfirmedCounts]=useState(0);
-    const [deliveredCounts,setDeliveredCounts]=useState(0);
-    const [staff,setStaff]=useState([]);
-    const [availableStaff,setAvailableStaff]=useState([]);
-    const [staffTableData,setStaffTableData]=useState([]);
+    const [isOrdersLoading,setOrdersLoading]=useState(true);
+    const [isStaffLoading,setStaffLoading]=useState(true);
+    const [isAmountLoading,setAmountLoading]=useState(true);
+    const [OrderCountsDetails,setOrderCountsDetails]=useState([]);
     let AdminToken;
 
+    const totalOrdersCounts=useSelector(state=>state.admin.OrdersCounts);
+    const ordersData=useSelector(state=>state.admin.Orders);
+    const staffRecord=useSelector(state=>state.admin.Staff);
+    const amountData=useSelector(state=>state.admin.AmountData);
+    const dispatch=useDispatch();
 
     
     useEffect(()=>{
@@ -41,13 +42,64 @@ const HomeScreen=(props)=>{
 
 
     
+    useEffect(()=>{
+            fetch(`http://${IP.ip}:3000/orderCounts/countsForAdmin`)
+            .then((response)=>response.json())
+            .then((response)=>setOrderCountsDetails(response[0]))
+            .then(()=>dispatch(getOrderCounts(OrderCountsDetails)))
+            //.then(()=>console.log(totalOrdersCounts))
+            
+        .catch((error)=>console.error(error))
+        .finally(()=>setRefreshing(false));
 
+    },[refreshing])
+
+
+    useEffect(()=>{     
+       fetch(`http://${IP.ip}:3000/order/names/ordersForAdmin`)
+        .then((response)=>response.json())
+        .then((response)=>dispatch(getOrderData(response)))
+        //.then((response)=>setAllOrdersData(response))
+        //.then(()=>dispatch(getOrderData(allOrdersData)))
+        //.then(()=>console.log(ordersData))
+        //.then(()=>setPendingOrders(preparePendingOrdersForTable))
+    .catch((error)=>console.error(error))
+    .finally(()=>setOrdersLoading(false));
+},[isOrdersLoading,refreshing])
+
+
+useEffect(()=>{ 
+    fetch(`http://${IP.ip}:3000/staff`)
+    .then((response)=>response.json())
+    .then((response)=>dispatch(getStaffData(response)))
+    //.then((response)=>setStaffData(response))
+    //.then(()=>dispatch(getStaffData(staffData)))
+    //.then(()=>console.log(staffRecord))
+    .catch((error)=>console.error(error))
+    .finally(()=>setStaffLoading(false));
+},[isStaffLoading,refreshing])
+
+useEffect(()=>{
+    fetch(`http://${IP.ip}:3000/payments`)
+    .then((response)=>response.json())
+    .then((response)=>dispatch(getAmountData(response[0])))
+    .then(()=>console.log(amountData))
+    .then(()=>setAmountLoading(false))
+    .catch((error)=>console.error(error))
+  },[isAmountLoading]);
+
+
+    
+    /*
     useEffect(()=>{
         let dataArray=[];
         let staffArray=[];
-        fetch(`http://${IP.ip}:3000/order/status/pending`)
+        fetch(`http://${IP.ip}:3000/order/names/ordersForAdmin`)
         .then((response)=>response.json())
-        .then((response)=>setPendingOrders(response))
+        .then((response)=>setAllOrdersData(response))
+        .then(()=>dispatch(getOrderData(allOrdersData)))
+        .then(()=>console.log(ordersData))
+        
         .then(()=>{
             pendingOrders.map((row)=>{
                  let orderId=row.order_id;
@@ -75,26 +127,46 @@ const HomeScreen=(props)=>{
         .then(()=>setStaffTableData(staffArray))
 
         })
-        
-
-
-        .then(()=>{
-            fetch(`http://${IP.ip}:3000/orderCounts/pending`)
+        .then(async ()=>{
+            await fetch(`http://${IP.ip}:3000/orderCounts/countsForAdmin`)
             .then((response)=>response.json())
-            .then((response)=>setPendingCounts(response[0].pendingOrders));
-
-            fetch(`http://${IP.ip}:3000/orderCounts/confirmed`)
-            .then((response)=>response.json())
-            .then((response)=>setConfirmedCounts(response[0].confirmedOrders));
-
-            fetch(`http://${IP.ip}:3000/orderCounts/delivered`)
-            .then((response)=>response.json())
-            .then((response)=>setDeliveredCounts(response[0].deliveredOrders));
+            .then((response)=>setOrderCountsDetails(response[0]))
+            .then(()=>dispatch(getOrderCounts(OrderCountsDetails)))
 
         })
         .catch((error)=>console.error(error))
         .finally(()=>setLoading(false));
-      },[refreshing]);
+      },[refreshing]);*/
+
+    const preparePendingOrdersForTable=(orders)=>{
+        const pendings=orders.filter(item=>item.status==='pending');
+        const tempArray=[];
+        pendings.map((row)=>{
+            let orderId=row.order_id;
+            let custName=row.firstname;
+            let kitchen=row.kitchen_name;
+            let amount=row.total_amount;
+            let newRow=[orderId,custName,kitchen,amount];
+            tempArray.push(newRow);  
+         }) 
+        
+        return tempArray;
+    }
+
+
+    const prepareStaffForTable=(staff)=>{
+        const available=staff.filter(item=>item.status===1);
+        const tempArray=[];
+        available.map((row)=>{
+            let staffId=row.staff_id;
+            let name=row.firstname;
+            let phone=row.contact;
+            let newRow=[staffId,name,phone];
+            tempArray.push(newRow);  
+         }) 
+        
+        return tempArray;
+    }
 
     
 
@@ -108,10 +180,10 @@ const HomeScreen=(props)=>{
           <View style={styles.screen}>
               
               <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}>
-              <OrdersCard pending={pendingCounts} box1="Pending" confirmed={confirmedCounts} box2="Confirmed" delivered={deliveredCounts} box3="Delivered" header="Orders Summary"/>
-              <NotificationCardHome tableData={tableData}
+              <OrdersCard pending={totalOrdersCounts.pendingCounts} box1="Pending" confirmed={totalOrdersCounts.confirmedCounts} box2="Confirmed" delivered={totalOrdersCounts.deliveredCounts} box3="Delivered" header="Orders Summary"/>
+              <NotificationCardHome tableData={preparePendingOrdersForTable(ordersData)}
             onSelect={()=>{}}/>
-            <StaffCardHome tableData={staffTableData}/>
+            <StaffCardHome tableData={prepareStaffForTable(staffRecord)}/>
             </ScrollView>
           </View>
         )

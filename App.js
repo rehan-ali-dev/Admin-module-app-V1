@@ -3,6 +3,9 @@ import { useEffect } from 'react';
 import { StyleSheet, Text, View,ToastAndroid } from 'react-native';
 import HomeNavigator from './navigation/adminBottomNavigation';
 import * as Notifications from 'expo-notifications';
+import { combineReducers,createStore } from 'redux';
+import { Provider,useDispatch } from 'react-redux';
+import adminReducer from './store/reducers/adminReducers';
 import IP from './constants/IP';
 
 Notifications.setNotificationHandler({
@@ -11,6 +14,12 @@ Notifications.setNotificationHandler({
             shouldPlaySound:true};
   },
 });
+
+const rootReducer=combineReducers({
+  admin:adminReducer
+});
+
+const store=createStore(rootReducer);
 
 export default function App() {
 
@@ -77,7 +86,9 @@ export default function App() {
 
 
   return (
+    <Provider store={store}>
     <HomeNavigator/>
+    </Provider>
   );
 }
 

@@ -1,6 +1,8 @@
 import React,{useState,useEffect} from "react";
 import { View,Text,StyleSheet, Button, FlatList,TextInput,TouchableOpacity, ScrollView,Modal,ToastAndroid } from "react-native";
 import Colors from '../constants/Colors';
+import { useSelector,useDispatch } from "react-redux";
+import { updateOrderStatus,updateOrderCounts,updateStaffStatus } from "../store/actions/adminActions";
 import ItemDetailsTable from "../components/itemsDetailsTable";
 
 import IP from "../constants/IP";
@@ -19,13 +21,19 @@ const OrderDetailsScreen=(props)=>{
 
     const orderId=props.navigation.getParam('orderId');
     const customerId=props.navigation.getParam('customerId');
+    const customerName=props.navigation.getParam('customerName');
     const chefId=props.navigation.getParam('chefId');
+    const kitchenName=props.navigation.getParam('kitchenName');
     const currentStatus=props.navigation.getParam('currentStatus');
     const placedTime=props.navigation.getParam('time');
 
+    const dispatch=useDispatch();
+
+    const staffRecord=useSelector(state=>state.admin.Staff)
+
 
     useEffect(()=>{
-        fetch(`http://${IP.ip}:3000/customer/${customerId}`)
+        /*fetch(`http://${IP.ip}:3000/customer/${customerId}`)
         .then((response)=>response.json())
         .then((response)=>setCustomerData(response[0]))
         .then(()=>{
@@ -33,7 +41,7 @@ const OrderDetailsScreen=(props)=>{
             .then((response)=>response.json())
             .then((response)=>setKitchenData(response[0]))
         })
-        .then(()=>{
+        .then(()=>{*/
             fetch(`http://${IP.ip}:3000/orderDetail/sum/${orderId}`)
             .then((response)=>response.json())
             .then((response)=>
@@ -41,7 +49,7 @@ const OrderDetailsScreen=(props)=>{
              setDeliveryCharges(response[0].totalItems*20);
              setGrandTotal(subTotal+deliveryCharges);
             })
-        })
+       // })
         ////// working
         .then(()=>{
             fetch(`http://${IP.ip}:3000/staff/available/staffName`)
@@ -88,6 +96,9 @@ const OrderDetailsScreen=(props)=>{
               },
             body:JSON.stringify(data)
         }).then((response)=>response.json())
+        .then(()=>dispatch(updateOrderCounts('ready to deliver')))
+        .then(()=>dispatch(updateOrderStatus(orderId,'ready to deliver')))
+        .then(()=>dispatch(updateStaffStatus(staffId,0)))
         .then(()=>changeStaffAvailabilityStatus(staffId,0))
         .then(()=>ToastAndroid.show(`Task Assigned Successfully`, ToastAndroid.SHORT))
         .catch((error)=>console.error(error))
@@ -104,9 +115,9 @@ const OrderDetailsScreen=(props)=>{
                 <Text style={styles.title}>Order Id: #{orderId}</Text>
                 <Text style={styles.timeZone}>Time{props.orderedTime}</Text>
                 </View> 
-                <Text style={styles.subTitle}>Customer Name: {customerData.firstname} {customerData.lastname}</Text>
+                <Text style={styles.subTitle}>Customer Name: {customerName}</Text>
                 <Text style={styles.subTitle}>Customer Phone: {customerId}</Text>
-                <Text style={styles.subTitle}>Kitchen Name:  {kitchenData.kitchen_name}</Text>
+                <Text style={styles.subTitle}>Kitchen Name:  {kitchenName}</Text>
                 <Text style={styles.subTitle}>Kitchen Phone:  {chefId}</Text>
                 <Text style={styles.subTitle}>Current Status:  {currentStatus}</Text>
                 <Text style={styles.subTitle}>Orderd Placed:{placedTime}</Text>
@@ -154,8 +165,8 @@ const OrderDetailsScreen=(props)=>{
                     <Text style={styles.headerText}>Assign Delivery Boy</Text>
                     </View>
                     <Text style={styles.title}>Order Id: #{orderId}</Text>
-                    <Text style={styles.subTitle}>Customer Name:  {customerData.firstname} {customerData.lastname}</Text>
-                    <Text style={styles.subTitle}>Kitchen Name:  {kitchenData.kitchen_name}</Text>
+                    <Text style={styles.subTitle}>Customer Name:  {customerName}</Text>
+                    <Text style={styles.subTitle}>Kitchen Name:  {kitchenName}</Text>
                     <Text style={styles.subTitle}></Text>
                     <Text style={styles.subTitle}>Staff Id</Text>
                     

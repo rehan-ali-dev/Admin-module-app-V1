@@ -3,6 +3,7 @@ import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Ref
 import Colors from '../constants/Colors';
 import CollectionsCard from "../components/collectionsCard";
 import KitchensPaymentsTable from "../components/kitchensPaymentsTable";
+import { useSelector } from "react-redux";
 import IP from "../constants/IP";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -12,7 +13,10 @@ const PaymentsScreen=()=>{
     //const [totalDeliveryCharges,setTotalDeliveryCharges]=useState(0);
     const [paymentsRecord,setPaymentsRecord]=useState(0);
     const [refreshing,setRefreshing]=useState(true);
-    
+
+    const paymentRecord=useSelector(state=>state.admin.AmountData);
+
+    /*
     useEffect(()=>{
         fetch(`http://${IP.ip}:3000/payments`)
         .then((response)=>response.json())
@@ -20,13 +24,14 @@ const PaymentsScreen=()=>{
         .then(()=>setRefreshing(false))
         .catch((error)=>console.error(error))
        
-      },[refreshing]);
+      },[refreshing]);*/
       
     
         return(
           <View style={styles.screen}>
-             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}>
-             <CollectionsCard box1="Total Collection" box2="Delivery Charges" header="Today's Collection" totalCollection={paymentsRecord.totalCollection} totalCharges={paymentsRecord.totalItems*20}/>
+             <ScrollView>
+             {/*refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}*/}
+             <CollectionsCard box1="Total Collection" box2="Delivery Charges" header="Today's Collection" totalCollection={paymentRecord.totalCollection} totalCharges={paymentRecord.totalDeliveryCharges}/>
              {/* 
             <View style={{alignItems:'center',paddingTop:15}}>
              <Text style={styles.headerText}>Kitchens's Payments</Text>

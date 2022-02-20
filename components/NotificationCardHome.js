@@ -2,10 +2,31 @@ import React from "react";
 import { Text,View,StyleSheet,TouchableOpacity,Image,ImageBackground} from 'react-native';
 import Colors from "../constants/Colors";
 import PendingTable from "./tableComponentPending";
+import { useState,useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const  NotificationCardHome=props=>{
 
     //console.log(props.tableData);
+    const [pendingOrders,setPendingOrders]=useState([]);
+    const [isLoading,setLoading]=useState(true);
+    const allOrders=useSelector(state=>state.admin.Orders);
+    
+    /*useEffect(()=>{
+        let pendings=allOrders.filter(item=>item.status==='pending');
+        let dataArray=[];
+        pendings.map((row)=>{
+            let orderId=row.order_id;
+            let custName=row.firstname;
+            let kitchen=row.kitchen_name;
+            let amount=row.total_amount;
+            let newRow=[orderId,custName,kitchen,amount];
+            dataArray.push(newRow);  
+         })
+        setPendingOrders(dataArray);
+        setLoading(false);
+    
+        },[isLoading]);*/
    
     return(
         <View style={styles.notificationCard}>
@@ -13,6 +34,7 @@ const  NotificationCardHome=props=>{
                 <Text style={styles.headerText}>Pending Orders</Text>
             </View>
             <PendingTable tableContent={props.tableData}/>
+           
                {/*
                 <Text style={styles.title}>Order Id: {props.orderId}</Text>
                 <View style={styles.notificationContainer}></View>

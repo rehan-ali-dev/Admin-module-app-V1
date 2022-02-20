@@ -1,6 +1,8 @@
 import React,{useCallback, useEffect,useState} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
+import { useDispatch,useSelector } from "react-redux";
+import { updateOrderCounts,updateOrderStatus,updateStaffStatus } from "../store/actions/adminActions";
 import IP from "../constants/IP";
 import OrdersCard from '../components/ordersCard';
 import OrderCardOrders from "../components/orderCardOrdersScreen";
@@ -14,41 +16,12 @@ const OrdersScreen=(props)=>{
     const [deliveredOrderDetails,setDeliveredOrderDetails]=useState('');
     const [refreshScreen,setRefreshScreen]=useState(false);
     const [refreshing,setRefreshing]=useState(false);
-    const [pendingCounts,setPendingCounts]=useState(0);
-    const [confirmedCounts,setConfirmedCounts]=useState(0);
-    const [deliveredCounts,setDeliveredCounts]=useState(0);
-   
 
-    
+    const dispatch=useDispatch();
 
+    const totalOrdersCounts=useSelector(state=>state.admin.OrdersCounts);
+    const ordersList=useSelector(state=>state.admin.Orders);
 
-    useEffect(()=>{
-        fetch(`http://${IP.ip}:3000/order/names/ordersForAdmin`)
-        .then((response)=>response.json())
-        .then((response)=>setOrdersData(response))
-        .then(()=>{setRefreshScreen(false)})
-        .then(()=>console.log("running"))
-        .then(()=>{
-            fetch(`http://${IP.ip}:3000/orderCounts/pending`)
-            .then((response)=>response.json())
-            .then((response)=>setPendingCounts(response[0].pendingOrders));
-
-            fetch(`http://${IP.ip}:3000/orderCounts/confirmed`)
-            .then((response)=>response.json())
-            .then((response)=>setConfirmedCounts(response[0].confirmedOrders));
-
-            fetch(`http://${IP.ip}:3000/orderCounts/delivered`)
-            .then((response)=>response.json())
-            .then((response)=>setDeliveredCounts(response[0].deliveredOrders));
-
-        })
-        .catch((error)=>console.error(error))
-       
-      },[refreshScreen]);
-      //orderData placed here as dependency
-
-
-       
 
       const getDeliveredOrderDetails=(orderId)=>{
         fetch(`http://${IP.ip}:3000/order/orderRecord/${orderId}`)
@@ -58,7 +31,7 @@ const OrdersScreen=(props)=>{
       }
 
        /////////  Function to update the status of order 
-       const updateOrderStatus=(orderId)=>{
+       const updateOrderStatuses=(orderId)=>{
         let url=`http://${IP.ip}:3000/order/updateStatus/${orderId}`;
         let data={
             status:'delivered',
@@ -71,7 +44,28 @@ const OrdersScreen=(props)=>{
               },
             body:JSON.stringify(data)
         }).then((response)=>response.json())
+        .then(()=>dispatch(updateOrderCounts('delivered')))
+        .then(()=>dispatch(updateOrderStatus(orderId,'delivered')))
         .then(()=>sendNotificationToChef(orderId))
+        .catch((error)=>console.error(error))   
+      }
+
+
+      /////////  Function to update Staff Status
+      const updateStaffStatuses=(staffId)=>{
+        let url=`http://${IP.ip}:3000/staff/updateStatus/${staffId}`;
+        let data={
+            status:1,
+        }
+        fetch(url,{
+            method:'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .then(()=>dispatch(updateStaffStatus(staffId,1)))
         .catch((error)=>console.error(error))   
       }
 
@@ -114,7 +108,10 @@ const OrdersScreen=(props)=>{
                       customerId:itemData.item.cust_id,
                       chefId:itemData.item.chef_id,
                       currentStatus:itemData.item.status,
-                      time:itemData.item.time
+                      time:itemData.item.time,
+                      customerName:itemData.item.firstname,
+                      kitchenName:itemData.item.kitchen_name
+
                   }
                   });
               
@@ -139,10 +136,9 @@ const OrdersScreen=(props)=>{
 
         return(
           <View style={styles.screen}>
-            <OrdersCard pending={pendingCounts} box1="Pending" confirmed={confirmedCounts} box2="Confirmed" delivered={deliveredCounts} box3="Delivered" header="Orders Summary"/>
-              <FlatList data={ordersData} renderItem={renderOrderCard} keyExtractor={(item)=>item.order_id}
+            <OrdersCard pending={totalOrdersCounts.pendingCounts} box1="Pending" confirmed={totalOrdersCounts.confirmedCounts} box2="Confirmed" delivered={totalOrdersCounts.deliveredCounts} box3="Delivered" header="Orders Summary"/>
+              <FlatList data={ordersList} renderItem={renderOrderCard} keyExtractor={(item)=>item.order_id}
             showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={refreshScreen} onRefresh={()=>{setRefreshScreen(true)}}/>}
             />
 
 
@@ -177,7 +173,8 @@ const OrdersScreen=(props)=>{
                     //assignTask(orderId,staffId);
                     console.log(`Staff Id`);
                     setShowModal(false);
-                    updateOrderStatus(deliveredOrderDetails.order_id);
+                    updateOrderStatuses(deliveredOrderDetails.order_id);
+                    updateStaffStatuses(deliveredOrderDetails.staff);
                     showAlert(deliveredOrderDetails.order_id,deliveredOrderDetails.total_amount,deliveredOrderDetails.staff);
                     setRefreshScreen(true);
                     
