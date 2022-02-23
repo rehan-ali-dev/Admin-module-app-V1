@@ -2,7 +2,7 @@ import React,{useCallback, useEffect,useState} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
 import { useDispatch,useSelector } from "react-redux";
-import { updateOrderCounts,updateOrderStatus,updateStaffStatus } from "../store/actions/adminActions";
+import { updateOrderCounts,updateOrderStatus,getStaffAssigned,getAmountData,getStaffAvailable } from "../store/actions/adminActions";
 import IP from "../constants/IP";
 import OrdersCard from '../components/ordersCard';
 import OrderCardOrders from "../components/orderCardOrdersScreen";
@@ -46,13 +46,21 @@ const OrdersScreen=(props)=>{
         }).then((response)=>response.json())
         .then(()=>dispatch(updateOrderCounts('delivered')))
         .then(()=>dispatch(updateOrderStatus(orderId,'delivered')))
+        .then(()=>getUpdatedPayments())
         .then(()=>sendNotificationToChef(orderId))
         .catch((error)=>console.error(error))   
       }
 
+      const getUpdatedPayments=async ()=>{
+        await fetch(`http://${IP.ip}:3000/payments`)
+        .then((response)=>response.json())
+        .then((response)=>dispatch(getAmountData(response[0])))
+        .catch((error)=>console.error(error))
+      }
+
 
       /////////  Function to update Staff Status
-      const updateStaffStatuses=(staffId)=>{
+      /*const updateStaffStatuses=(staffId)=>{
         let url=`http://${IP.ip}:3000/staff/updateStatus/${staffId}`;
         let data={
             status:1,
@@ -67,6 +75,38 @@ const OrdersScreen=(props)=>{
         }).then((response)=>response.json())
         .then(()=>dispatch(updateStaffStatus(staffId,1)))
         .catch((error)=>console.error(error))   
+      }*/
+      const removeAfterDelivery=(staffId)=>{
+        let url=`http://${IP.ip}:3000/staff//removeAfterDelivery`;
+        let data={
+            staffId:staffId,
+        }
+        fetch(url,{
+            method:'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .then(()=>getUpdatedAssigned())
+        .then(()=>getUpdatedAvailable())
+        //.then(()=>dispatch(updateStaffStatus(staffId,1)))
+        .catch((error)=>console.error(error)) 
+    }
+
+    const getUpdatedAssigned=async ()=>{
+        await fetch(`http://${IP.ip}:3000/staff/staffAvailable/assigned`)
+        .then((response)=>response.json())
+        .then((response)=>dispatch(getStaffAssigned(response))) 
+        .catch((error)=>console.error(error))
+    }
+
+    const getUpdatedAvailable=async ()=>{
+        await fetch(`http://${IP.ip}:3000/staff/staffData/available`)
+        .then((response)=>response.json())
+        .then((response)=>dispatch(getStaffAvailable(response)))
+        .catch((error)=>console.error(error))
       }
 
       // Send Delivered Notification to crossponding Chef
@@ -174,7 +214,8 @@ const OrdersScreen=(props)=>{
                     console.log(`Staff Id`);
                     setShowModal(false);
                     updateOrderStatuses(deliveredOrderDetails.order_id);
-                    updateStaffStatuses(deliveredOrderDetails.staff);
+                    //updateStaffStatuses(deliveredOrderDetails.staff);
+                    removeAfterDelivery(deliveredOrderDetails.staff_id);
                     showAlert(deliveredOrderDetails.order_id,deliveredOrderDetails.total_amount,deliveredOrderDetails.staff);
                     setRefreshScreen(true);
                     

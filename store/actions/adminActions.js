@@ -4,8 +4,11 @@ export const GET_ORDER_COUNTS='GET_ORDER_COUNTS';
 export const UPDATE_ORDER_COUNTS='UPDATE_ORDER_COUNTS';
 export const UPDATE_ORDER_STATUS='UPDATE_ORDER_STATUS';
 export const GET_STAFF_DATA='GET_STAFF_DATA';
+export const GET_STAFF_ASSIGNED='GET_STAFF_ASSIGNED';
+export const GET_STAFF_AVAILABLE='GET_STAFF_AVAILABLE';
 export const UPDATE_STAFF_STATUS='UPDATE_STAFF_STATUS';
 export const GET_AMOUNT_DATA='GET_AMOUNT_DATA';
+
 
 
 export const getOrderData=(items)=>{
@@ -14,6 +17,15 @@ export const getOrderData=(items)=>{
 
 export const getStaffData=(items)=>{
     return{type:GET_STAFF_DATA,staff:items};
+}
+
+
+export const getStaffAssigned=(items)=>{
+    return{type:GET_STAFF_ASSIGNED,staff:items};
+}
+
+export const getStaffAvailable=(items)=>{
+    return{type:GET_STAFF_AVAILABLE,staff:items};
 }
 
 export const getAmountData=(itemObj)=>{

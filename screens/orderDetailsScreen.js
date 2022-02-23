@@ -1,8 +1,9 @@
 import React,{useState,useEffect} from "react";
-import { View,Text,StyleSheet, Button, FlatList,TextInput,TouchableOpacity, ScrollView,Modal,ToastAndroid } from "react-native";
+import { View,Text,StyleSheet, Button,TextInput,TouchableOpacity, ScrollView,Modal,ToastAndroid } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import Colors from '../constants/Colors';
 import { useSelector,useDispatch } from "react-redux";
-import { updateOrderStatus,updateOrderCounts,updateStaffStatus } from "../store/actions/adminActions";
+import { updateOrderStatus,updateOrderCounts,getStaffAssigned,updateStaffStatus,getStaffAvailable } from "../store/actions/adminActions";
 import ItemDetailsTable from "../components/itemsDetailsTable";
 
 import IP from "../constants/IP";
@@ -11,13 +12,16 @@ import IP from "../constants/IP";
 const OrderDetailsScreen=(props)=>{
 
     const [showModal,setShowModal]=useState(false);
+    const [refreshing,setRefreshing]=useState(true);
     const [staffId,setStaffId]=useState('');
-    const [customerData,setCustomerData]=useState([]);
-    const [kitchenData,setKitchenData]=useState([]);
+    const [staffName,setStaffName]=useState('');
+    const [returnTime,setReturnTime]=useState(0);
     const [availableStaffNames,setAvailableStaffNames]=useState([]);
+    const [availableStaff,setAvailableStaff]=useState([]);
     const [subTotal,setSubTotal]=useState(0);
     const [deliveryCharges,setDeliveryCharges]=useState(0);
     const [grandTotal,setGrandTotal]=useState(0);
+    const returnTimes=[15,30,45];
 
     const orderId=props.navigation.getParam('orderId');
     const customerId=props.navigation.getParam('customerId');
@@ -33,15 +37,6 @@ const OrderDetailsScreen=(props)=>{
 
 
     useEffect(()=>{
-        /*fetch(`http://${IP.ip}:3000/customer/${customerId}`)
-        .then((response)=>response.json())
-        .then((response)=>setCustomerData(response[0]))
-        .then(()=>{
-            fetch(`http://${IP.ip}:3000/chef/${chefId}`)
-            .then((response)=>response.json())
-            .then((response)=>setKitchenData(response[0]))
-        })
-        .then(()=>{*/
             fetch(`http://${IP.ip}:3000/orderDetail/sum/${orderId}`)
             .then((response)=>response.json())
             .then((response)=>
@@ -49,18 +44,25 @@ const OrderDetailsScreen=(props)=>{
              setDeliveryCharges(response[0].totalItems*20);
              setGrandTotal(subTotal+deliveryCharges);
             })
-       // })
-        ////// working
-        .then(()=>{
-            fetch(`http://${IP.ip}:3000/staff/available/staffName`)
-            .then((response)=>response.json())
-            .then((response)=>
-            {setAvailableStaffNames(response);
-            })
-        })
         .catch((error)=>console.error(error))
        
       },[]);
+
+      useEffect(()=>{
+        let staffArray=[];
+        fetch(`http://${IP.ip}:3000/staff/staffData/available`)
+        .then((response)=>response.json())
+        .then((response)=>setAvailableStaff(response))
+        .then(()=>{                   
+            availableStaff.map((row)=>{
+                 let staffName=row.firstname;
+                 staffArray.push(staffName);       
+        })
+        })
+        .then(()=>setAvailableStaffNames(staffArray))
+        .catch((error)=>console.error(error))
+        .finally(()=>setRefreshing(false))
+      },[refreshing]);
 
 
       ///  Function to change availability status of staff
@@ -80,9 +82,45 @@ const OrderDetailsScreen=(props)=>{
         .catch((error)=>console.error(error));
       } 
 
+      ///  Function to Add Staff Data in Assigned Staff Table
+      const addStaffIntoAssigned=(staffId,status,deliveryTime)=>{
+        let url=`http://${IP.ip}:3000/staff/staffAvailable`;
+        let data={
+            staffId:staffId,
+            status:status,
+            deliveryTime:deliveryTime,
+        }
+        fetch(url,{
+            method:'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .then(()=>getUpdatedAssigned())
+        .then(()=>getUpdatedAvailable())
+        .catch((error)=>console.error(error));
+      } 
+
+      const getUpdatedAssigned=async ()=>{
+        await fetch(`http://${IP.ip}:3000/staff/staffAvailable/assigned`)
+        .then((response)=>response.json())
+        .then((response)=>dispatch(getStaffAssigned(response))) 
+        .catch((error)=>console.error(error))
+    }
+
+      const getUpdatedAvailable=async ()=>{
+        await fetch(`http://${IP.ip}:3000/staff/staffData/available`)
+        .then((response)=>response.json())
+        .then((response)=>dispatch(getStaffAvailable(response)))
+        .catch((error)=>console.error(error))
+      }
+
+
 
       /////////  Function Assigning Task
-      const assignTask=(orderId,staffId)=>{
+      const assignTask=(orderId,staffId,dTime)=>{
         let url=`http://${IP.ip}:3000/order/update/${orderId}`;
         let data={
             status:'ready to deliver',
@@ -98,8 +136,8 @@ const OrderDetailsScreen=(props)=>{
         }).then((response)=>response.json())
         .then(()=>dispatch(updateOrderCounts('ready to deliver')))
         .then(()=>dispatch(updateOrderStatus(orderId,'ready to deliver')))
-        .then(()=>dispatch(updateStaffStatus(staffId,0)))
-        .then(()=>changeStaffAvailabilityStatus(staffId,0))
+        //.then(()=>dispatch(updateStaffStatus(staffId,0)))
+        .then(()=>addStaffIntoAssigned(staffId,0,dTime))
         .then(()=>ToastAndroid.show(`Task Assigned Successfully`, ToastAndroid.SHORT))
         .catch((error)=>console.error(error))
         
@@ -168,12 +206,42 @@ const OrderDetailsScreen=(props)=>{
                     <Text style={styles.subTitle}>Customer Name:  {customerName}</Text>
                     <Text style={styles.subTitle}>Kitchen Name:  {kitchenName}</Text>
                     <Text style={styles.subTitle}></Text>
-                    <Text style={styles.subTitle}>Staff Id</Text>
+                    <Text style={styles.subTitle}>Available Staff</Text>
+
                     
-                    <TextInput style={{...styles.inputText,borderColor:Colors.lightBlack,
+                    {/*<TextInput style={{...styles.inputText,borderColor:Colors.lightBlack,
                     borderWidth:1}} placeholder="Staff Id" 
                     value={staffId} onChangeText={(text)=>setStaffId(text)}
-                    />
+                    />*/}
+                    <View style={{...styles.container,borderColor:Colors.lightBlack,
+                    borderWidth:1,marginVertical:10}}>
+                    <Picker
+                            selectedValue={staffName}
+                            style={{width:'100%'}}
+                            onValueChange={(itemValue, itemIndex) => setStaffName(itemValue)}
+                        >
+                          <Picker.Item label={'Choose Staff'} value={'disabled'} color='#ccc' />
+                          {availableStaffNames.map((item, index) => {
+                            return (<Picker.Item label={item} value={item} key={index}/>) 
+                            })}
+                    </Picker>
+                    </View>
+
+
+                    <Text style={styles.subTitle}>Estimated Return Time</Text>
+                        <View style={{...styles.container,borderColor:Colors.lightBlack,
+                        borderWidth:1,marginVertical:10}}>
+                        <Picker
+                                selectedValue={returnTime}
+                                style={{width:'100%'}}
+                                onValueChange={(itemValue, itemIndex) => setReturnTime(itemValue)}
+                            >
+                            <Picker.Item label={'Choose Estimated Time'} value={'disabled'} color='#ccc' />
+                            {returnTimes.map((item, index) => {
+                                return (<Picker.Item label={`${item} Minutes`} value={item*100} key={index}/>) 
+                                })}
+                        </Picker>
+                        </View>
                  
                 <View style={{...styles.btnContainer,justifyContent:'space-between'}}>
                 <TouchableOpacity onPress={()=>{
@@ -184,13 +252,10 @@ const OrderDetailsScreen=(props)=>{
                 </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>{
-                    assignTask(orderId,staffId);
+                    const newAssigned=staffRecord.filter(staff=>staff.firstname===staffName)
+                    assignTask(orderId,newAssigned[0].staff_id,returnTime);
                     console.log(`Staff Id: ${staffId}`);
                     setShowModal(false);
-                    /*props.navigation.navigate({
-                        routeName:'Orders',
-                       
-                    })*/
                     props.navigation.goBack();
                     }}>
                 <View style={{...styles.buttonContainer}}>
@@ -214,6 +279,14 @@ const styles=StyleSheet.create(
             flex:1,
             
         },
+        container: {
+            
+            alignItems:'center',
+            //borderWidth:0.5,
+            backgroundColor: '#F5FCFF',
+            height:45,
+            borderRadius:10
+          },
         notificationCard:{
             width:'95%',
             backgroundColor:'#f5f5f5',

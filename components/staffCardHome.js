@@ -1,16 +1,18 @@
 import React from "react";
 import { Text,View,StyleSheet,TouchableOpacity,Image,ImageBackground} from 'react-native';
 import Colors from "../constants/Colors";
-import AvailableStaffTable from "./availableStaffTable";
+import AssignedStaffTable from "./assignedStaffTable";
+import AssignedStaffTableHome from "./assignedStaffTableForHome";
 
 const  StaffCardHome=props=>{
    
     return(
         <View style={styles.staffCard}>
             <View style={styles.orderHeader}>
-                <Text style={styles.headerText}>Available Staff</Text>
+                <Text style={styles.headerText}>Assigned Staff</Text>
             </View>
-            <AvailableStaffTable tableContent={props.tableData}/>
+            {/*<AvailableStaffTable tableContent={props.tableData}/>*/}
+            <AssignedStaffTableHome tableData={props.tableData}/>
         </View>
     )
 };

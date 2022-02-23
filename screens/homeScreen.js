@@ -9,7 +9,7 @@ import NotificationCardHome from "../components/NotificationCardHome";
 import StaffCardHome from "../components/staffCardHome";
 import PendingTable from "../components/tableComponentPending";
 import { useDispatch,useSelector } from "react-redux";
-import { getOrderCounts,getOrderData,getStaffData,getAmountData } from "../store/actions/adminActions";
+import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned } from "../store/actions/adminActions";
 import { ScrollView } from "react-native-gesture-handler";
 import IP from "../constants/IP";
 
@@ -19,6 +19,7 @@ const HomeScreen=(props)=>{
     const [refreshing, setRefreshing] = useState(true);
     const [isOrdersLoading,setOrdersLoading]=useState(true);
     const [isStaffLoading,setStaffLoading]=useState(true);
+    const [isStaffAvLoading,setStaffAvLoading]=useState(true);
     const [isAmountLoading,setAmountLoading]=useState(true);
     const [OrderCountsDetails,setOrderCountsDetails]=useState([]);
     let AdminToken;
@@ -26,6 +27,7 @@ const HomeScreen=(props)=>{
     const totalOrdersCounts=useSelector(state=>state.admin.OrdersCounts);
     const ordersData=useSelector(state=>state.admin.Orders);
     const staffRecord=useSelector(state=>state.admin.Staff);
+    const staffAssignedRecord=useSelector(state=>state.admin.StaffAssigned);
     const amountData=useSelector(state=>state.admin.AmountData);
     const dispatch=useDispatch();
 
@@ -79,6 +81,18 @@ useEffect(()=>{
     .finally(()=>setStaffLoading(false));
 },[isStaffLoading,refreshing])
 
+useEffect(()=>{ 
+    fetch(`http://${IP.ip}:3000/staff/staffAvailable/assigned`)
+    .then((response)=>response.json())
+    .then((response)=>dispatch(getStaffAssigned(response))) 
+    .then(()=>console.log(staffAssignedRecord))
+    .catch((error)=>console.error(error))
+    .finally(()=>setStaffAvLoading(false));
+},[isStaffAvLoading,refreshing])
+
+
+
+
 useEffect(()=>{
     fetch(`http://${IP.ip}:3000/payments`)
     .then((response)=>response.json())
@@ -86,7 +100,7 @@ useEffect(()=>{
     .then(()=>console.log(amountData))
     .then(()=>setAmountLoading(false))
     .catch((error)=>console.error(error))
-  },[isAmountLoading]);
+  },[isAmountLoading,refreshing]);
 
 
     
@@ -168,6 +182,20 @@ useEffect(()=>{
         return tempArray;
     }
 
+    const prepareAssignedStaffForTable=(staff)=>{
+        const tempArray=[];
+        staff.map((row)=>{
+            let staffId=row.staff_id;
+            let orderId=row.order_id;
+            let dpart=row.departure;
+            let arriv=row.arrival;
+            let newRow=[staffId,orderId,dpart,arriv];
+            tempArray.push(newRow);  
+         }) 
+        console.log(tempArray);       
+        return tempArray;
+    }
+
     
 
     const moveToNotifications=()=>{
@@ -183,7 +211,8 @@ useEffect(()=>{
               <OrdersCard pending={totalOrdersCounts.pendingCounts} box1="Pending" confirmed={totalOrdersCounts.confirmedCounts} box2="Confirmed" delivered={totalOrdersCounts.deliveredCounts} box3="Delivered" header="Orders Summary"/>
               <NotificationCardHome tableData={preparePendingOrdersForTable(ordersData)}
             onSelect={()=>{}}/>
-            <StaffCardHome tableData={prepareStaffForTable(staffRecord)}/>
+            {/*<StaffCardHome tableData={prepareStaffForTable(staffRecord)}/>*/}
+            <StaffCardHome tableData={prepareAssignedStaffForTable(staffAssignedRecord)}/>
             </ScrollView>
           </View>
         )
