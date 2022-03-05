@@ -1,6 +1,7 @@
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createSwitchNavigator } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,9 +17,11 @@ import HomeScreen from '../screens/homeScreen';
 import OrdersScreen from '../screens/ordersScreen';
 import PaymentsScreen from '../screens/paymentsScreen';
 import KitchensScreen from '../screens/kitchensScreen';
+import KitchenDetailScreen from '../screens/kitchenDetailScreen';
 import NotificationsScreen from '../screens/notificationsScreen';
 import StaffScreen from '../screens/staffScreen';
 import OrderDetailsScreen from '../screens/orderDetailsScreen';
+import LoginScreen from '../screens/loginScreen';
 
 
 const defaultNavConfiguration= {
@@ -49,6 +52,7 @@ const OrdersNavigator=createStackNavigator(
 const KitchensNavigator=createStackNavigator(
     {    
         Kitchens:KitchensScreen,
+        KitchenDetail:KitchenDetailScreen,
     },defaultNavConfiguration
 );
 
@@ -110,6 +114,12 @@ const navigationConfiguration={
     }
 }
 
+const AuthNavigator=createStackNavigator(
+    {  
+        Login:LoginScreen,
+    },defaultNavConfiguration
+)
+
 
 
 const AdminBottomNavigator=Platform.OS === 'android'
@@ -131,4 +141,9 @@ const AdminBottomNavigator=Platform.OS === 'android'
    });
 
 
-export default createAppContainer(AdminBottomNavigator);
+   const MainNavigator=createSwitchNavigator({
+    Auth:AuthNavigator,
+    MainHome:AdminBottomNavigator
+})
+
+export default createAppContainer(MainNavigator);

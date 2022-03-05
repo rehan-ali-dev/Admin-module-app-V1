@@ -9,7 +9,7 @@ import NotificationCardHome from "../components/NotificationCardHome";
 import StaffCardHome from "../components/staffCardHome";
 import PendingTable from "../components/tableComponentPending";
 import { useDispatch,useSelector } from "react-redux";
-import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned } from "../store/actions/adminActions";
+import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned,getAdminData } from "../store/actions/adminActions";
 import { ScrollView } from "react-native-gesture-handler";
 import IP from "../constants/IP";
 
@@ -22,15 +22,20 @@ const HomeScreen=(props)=>{
     const [isStaffAvLoading,setStaffAvLoading]=useState(true);
     const [isAmountLoading,setAmountLoading]=useState(true);
     const [OrderCountsDetails,setOrderCountsDetails]=useState([]);
+    const dispatch=useDispatch();
+
+    
+    const adminData=props.navigation.getParam('admin');
+    
     let AdminToken;
 
     const totalOrdersCounts=useSelector(state=>state.admin.OrdersCounts);
     const ordersData=useSelector(state=>state.admin.Orders);
     const staffRecord=useSelector(state=>state.admin.Staff);
+    const adminDetail=useSelector(state=>state.admin.AdminDetails);
     const staffAssignedRecord=useSelector(state=>state.admin.StaffAssigned);
     const amountData=useSelector(state=>state.admin.AmountData);
-    const dispatch=useDispatch();
-
+   
     
     useEffect(()=>{
         Notifications.getExpoPushTokenAsync()
@@ -39,6 +44,7 @@ const HomeScreen=(props)=>{
           AdminToken=response.data;
           console.log(AdminToken);
         })
+        .then(()=>dispatch(getAdminData(adminData)))
         .catch((error)=>console.error(error))
       },[]);
 
