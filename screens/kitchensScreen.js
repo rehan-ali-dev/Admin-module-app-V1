@@ -17,7 +17,7 @@ const KitchensScreen=(props)=>{
 
 
     useEffect(()=>{
-        fetch(`http://${IP.ip}:3000/kitchen`)
+        fetch(`http://${IP.ip}:3000/kitchen/kitchenData/all`)
         .then((response)=>response.json())
         .then((response)=>setkitchensData(response))
         .catch((error)=>console.error(error))
@@ -35,6 +35,10 @@ const KitchensScreen=(props)=>{
         return(
            <KitchenCard kitchenName={itemData.item.kitchen_name} kitchenLogo={itemData.item.logo} startTime={itemData.item.start_time}
             endTime={itemData.item.end_time}
+            fname={itemData.item.firstname}
+            lname={itemData.item.lastname}
+            noOfDishes={itemData.item.numDishes}
+            chefId={itemData.item.chef_id}
             onSelect={()=>{
                 props.navigation.navigate({
                     routeName:'KitchenDetail',
@@ -42,7 +46,11 @@ const KitchensScreen=(props)=>{
                       kitchenName:itemData.item.kitchen_name,
                       kitchenLogo:itemData.item.logo,
                       startTime:itemData.item.start_time,
-                      endTime:itemData.item.end_time
+                      endTime:itemData.item.end_time,
+                      fname:itemData.item.firstname,
+                      lname:itemData.item.lastname,
+                      noOfDishes:itemData.item.numDishes,
+                      chefId:itemData.item.chef_id
 
 
                     }

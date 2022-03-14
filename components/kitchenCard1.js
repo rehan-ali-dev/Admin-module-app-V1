@@ -15,24 +15,30 @@ const KitchenCard=props=>{
         </View>
         <View style={styles.nameRating}>
             <Text style={styles.kitchenName}>{props.kitchenName}</Text>
-            <View style={styles.rating}>
+            {/* <View style={styles.rating}>
             <FontAwesome name="star" size={18} color={Colors.primaryLightColor} />
             <FontAwesome name="star" size={18} color={Colors.primaryLightColor} />
             <FontAwesome name="star" size={18} color={Colors.primaryLightColor} />
             <FontAwesome name="star-half-empty" size={18} color={Colors.primaryLightColor} />
             <FontAwesome name="star-o" size={18} color={Colors.primaryLightColor} />
+            </View> */}
+            <View>
+                <Text style={{...styles.numDishes}}>Owned By : {props.fname} {props.lname}</Text>
             </View>
             <View>
-                <Text style={styles.numDishes}>15 DISHES</Text>
+                <Text style={styles.numDishes}>Contact : {props.chefId}</Text>
+            </View>
+            <View>
+                <Text style={styles.numDishes}>{props.noOfDishes} DISHES</Text>
             </View>
         </View>
         </View>
         <View style={styles.moreDetails}>
         
-        <Text style={styles.specialHeader}>DISH SPECIALITIES</Text>
+        {/* <Text style={styles.specialHeader}>DISH SPECIALITIES</Text>
         <View>
             <Text style={styles.dishes}>Chicken Biryani, Chicken Karahi</Text>
-        </View>
+        </View> */}
         <View style={styles.timeDetail}>
             <View style={styles.time}>
                 <Text style={styles.timeHead}>START TIME</Text>
@@ -54,7 +60,7 @@ const styles=StyleSheet.create({
 
 
     kitchenCard:{
-         height:180,
+         height:160,
          width:'95%',
          backgroundColor:'#f5f5f5',
          borderRadius:15,
@@ -65,7 +71,7 @@ const styles=StyleSheet.create({
        
     },
     kitchenHeader:{
-        height:'55%',
+        height:'75%',
         width:'100%',
         padding:15,
         flexDirection:'row',

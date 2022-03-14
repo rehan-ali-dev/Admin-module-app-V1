@@ -32,6 +32,10 @@ const KitchenDetailScreen=(props)=>{
         const kitchenLogo=props.navigation.getParam('kitchenLogo');
         const startTime=props.navigation.getParam('startTime');
         const endTime=props.navigation.getParam('endTime');
+        const fname=props.navigation.getParam('fname');
+        const lname=props.navigation.getParam('lname');
+        const chefId=props.navigation.getParam('chefId');
+        const noOfDishes=props.navigation.getParam('noOfDishes');
 
 
         const renderFoodItem=(itemData)=>{
@@ -57,7 +61,7 @@ const KitchenDetailScreen=(props)=>{
             <View style={styles.container}>
                 <View style={styles.kitchenContainer}>
               <KitchenCard kitchenName={kitchenName} kitchenLogo={kitchenLogo} startTime={startTime}
-            endTime={endTime}/>
+            endTime={endTime} fname={fname} lname={lname} chefId={chefId} noOfDishes={noOfDishes} />
             </View>
             {dishes.length>0 &&
             <FlatList data={dishes} renderItem={renderFoodItem} keyExtractor={(item)=>item.dish_id}
