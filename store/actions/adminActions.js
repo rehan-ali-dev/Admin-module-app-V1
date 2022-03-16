@@ -10,6 +10,7 @@ export const GET_STAFF_ASSIGNED='GET_STAFF_ASSIGNED';
 export const GET_STAFF_AVAILABLE='GET_STAFF_AVAILABLE';
 export const UPDATE_STAFF_STATUS='UPDATE_STAFF_STATUS';
 export const GET_AMOUNT_DATA='GET_AMOUNT_DATA';
+export const GET_KITCHENS_PAYMENTS='GET_KITCHENS_PAYMENTS';
 
 
 
@@ -23,6 +24,10 @@ export const getDishesData=(items)=>{
 
 export const getStaffData=(items)=>{
     return{type:GET_STAFF_DATA,staff:items};
+}
+
+export const getKitchensPayments=(items)=>{
+    return{type:GET_KITCHENS_PAYMENTS,payments:items};
 }
 
 export const getAdminData=(item)=>{

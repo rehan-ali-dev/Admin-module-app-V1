@@ -6,35 +6,37 @@ import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-componen
 import { ScrollView } from "react-native-gesture-handler";
 
 const CONTENT = {
-  tableHead: ['Kitchen Name', 'Account No.', 'Total', 'Status'],
+  tableHead: ['Kitchen Name', 'Account No.', 'Total Earning', 'Pending','Date'],
   tableData: [
-    ['Bisma Ka Kitchen','03039898789', '10000', 'pending'],
-    ['0','a', 'b', 'c'],
-    ['0','1', '2', '3'],
-    ['0','a', 'b', 'c'],
-    ['0','a', 'b', 'c'],
-    ['0','a', 'b', 'c'],
+    ['Bisma Ka Kitchen','03039898789', '10000', '1900','12-12-20202'],
+    ['0','a', 'b', 'c', '1900','12-12-20202'],
+    ['0','1', '2', '3', '1900','12-12-20202'],
+    ['0','a', 'b', 'c', '1900','12-12-20202'],
+    ['0','a', 'b', 'c', '1900','12-12-20202'],
+    ['0','a', 'b', 'c', '1900','12-12-20202'],
   ],
 };
 
 
-const KitchensPaymentsTable=()=>{
+const KitchensPaymentsTable=(props)=>{
 
     
         return(
             <View style={styles.container}>
-              <ScrollView>  
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>  
             <Table borderStyle={{ borderWidth: 0.7 }}>
               <Row
                 data={CONTENT.tableHead}
-                flexArr={[2, 1.5, 0.8,1]}
+               
+                widthArr={[180, 110, 100,100,100]}
                 style={styles.head}
                 textStyle={styles.text}
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
-                  data={CONTENT.tableData}
-                  flexArr={[2,1.5,0.8,1]}
+                 data={props.tableContent}
+                  //data={CONTENT.tableData}
+                  widthArr={[180,110,100,100,100]}
                   style={styles.row}
                   textStyle={styles.text}
                 />
@@ -50,7 +52,7 @@ const KitchensPaymentsTable=()=>{
 
 const styles=StyleSheet.create(
     {
-        container: { flex: 1, backgroundColor: '#fff',height:200,marginHorizontal:5 },
+        container: { flex: 1, backgroundColor: '#fff',marginHorizontal:5 },
         head: { height: 35, backgroundColor: 'orange'},
         wrapper: { flexDirection: 'row' },
         row: { height: 26 },

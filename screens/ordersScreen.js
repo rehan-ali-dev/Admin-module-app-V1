@@ -14,6 +14,11 @@ const OrdersScreen=(props)=>{
     const [ordersData,setOrdersData]=useState([]);
     const [showModal,setShowModal]=useState(false);
     const [deliveredOrderDetails,setDeliveredOrderDetails]=useState('');
+    //const [particularChefData,setParticularChefData]=useState([]);
+    let particularChefData;
+    let subTotalOfOrder;
+    //const [subTotalOfOrder,setSubTotalOfOrder]=useState(0);
+
     const [refreshScreen,setRefreshScreen]=useState(false);
     const [refreshing,setRefreshing]=useState(false);
 
@@ -21,6 +26,9 @@ const OrdersScreen=(props)=>{
 
     const totalOrdersCounts=useSelector(state=>state.admin.OrdersCounts);
     const ordersList=useSelector(state=>state.admin.Orders);
+
+    
+    
 
 
       const getDeliveredOrderDetails=(orderId)=>{
@@ -51,10 +59,65 @@ const OrdersScreen=(props)=>{
         .catch((error)=>console.error(error))   
       }
 
+      const getPreviousPaymentsOfChef=async (kitchen)=>{
+        await fetch(`http://${IP.ip}:3000/payments/kitchensPayments/${kitchen}`)
+        .then((response)=>response.json())
+        .then((response)=>{
+            //setParticularChefData(response[0]))
+            console.log("Get PRevious PAyments")
+            console.log(response)
+            particularChefData=response[0]})
+        .catch((error)=>console.error(error))
+      }
+
+
+      const setUpdatedPayments=(kitchen,orderId)=>{
+          console.log("Entered")
+          getOrderSubTotal(orderId).then(()=>{
+              console.log("///// SubTotal OF ORder ")
+              console.log(subTotalOfOrder)
+          getPreviousPaymentsOfChef(kitchen).then(()=>{
+              console.log("//////  Get Chef DAta  //")
+              console.log(particularChefData)
+            let url=`http://${IP.ip}:3000/payments/updatePayment/deliveredOrder/${kitchen}`;
+            let data={
+            updatedEarning:particularChefData.total_earning+subTotalOfOrder,
+            updatedPending:particularChefData.pending+subTotalOfOrder
+            }
+        fetch(url,{
+            method:'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify(data)
+        }).then((response)=>response.json())
+        .then(()=>console.log("Done"))
+        .catch((error)=>console.error(error))   
+          })
+          })
+       
+      }
+
+
+
       const getUpdatedPayments=async ()=>{
         await fetch(`http://${IP.ip}:3000/payments`)
         .then((response)=>response.json())
         .then((response)=>dispatch(getAmountData(response[0])))
+        .catch((error)=>console.error(error))
+      }
+
+
+      const getOrderSubTotal=async (orderId)=>{
+        await fetch(`http://${IP.ip}:3000/order/sumSubTotal/${orderId}`)
+        .then((response)=>response.json())
+        .then((response)=>{
+            //setSubTotalOfOrder(response[0].subTotal)
+            console.log("Order Sub Total")
+            console.log(response[0])
+            subTotalOfOrder=response[0].subTotal;
+        })
         .catch((error)=>console.error(error))
       }
 
@@ -213,6 +276,10 @@ const OrdersScreen=(props)=>{
                     //assignTask(orderId,staffId);
                     console.log(`Staff Id`);
                     setShowModal(false);
+                    console.log("//////////// DELIVERED ORDER DETAILS ///////////");
+                    console.log(deliveredOrderDetails);
+                   
+                    setUpdatedPayments(deliveredOrderDetails.kitchen,deliveredOrderDetails.order_id);
                     updateOrderStatuses(deliveredOrderDetails.order_id);
                     //updateStaffStatuses(deliveredOrderDetails.staff);
                     removeAfterDelivery(deliveredOrderDetails.staff_id);

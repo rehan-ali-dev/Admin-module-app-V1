@@ -2,7 +2,8 @@ import { GET_ORDER_DETAILS,GET_ORDER_DATA,UPDATE_ORDER_STATUS,
     GET_ORDER_COUNTS,UPDATE_ORDER_COUNTS,
     GET_STAFF_DATA,UPDATE_STAFF_STATUS,GET_STAFF_AVAILABILITY,
     GET_AMOUNT_DATA,GET_ADMIN_DATA,GET_DISHES_DATA,
-    GET_STAFF_ASSIGNED,GET_STAFF_AVAILABLE
+    GET_STAFF_ASSIGNED,GET_STAFF_AVAILABLE,
+    GET_KITCHENS_PAYMENTS,
  } from "../actions/adminActions";
 
 import IP from "../../constants/IP";
@@ -18,6 +19,7 @@ const initialState={
     StaffAvailable:[],
     OrderDetails:[],
     AdminDetails:[],
+    KitchensPayments:[],
     OrdersCounts:{
         totalOrders:0,
         pendingCounts:0,
@@ -40,6 +42,8 @@ const adminReducer=(state=initialState,action)=>{
 
         case GET_STAFF_DATA:
             return {...state,Staff:action.staff};
+        case GET_KITCHENS_PAYMENTS:
+            return {...state,KitchensPayments:action.payments};
         
         case GET_ADMIN_DATA:{
             return{...state,AdminDetails:action.admin};
