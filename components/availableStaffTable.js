@@ -52,7 +52,7 @@ const AvailableStaffTable=(props)=>{
 
 const styles=StyleSheet.create(
     {
-        container: { flex: 1, backgroundColor: '#fff',height:150 },
+        container: { flex: 1, backgroundColor: '#fff'},
         head: { height: 35, backgroundColor: 'orange'},
         wrapper: { flexDirection: 'row' },
         row: { height: 26 },

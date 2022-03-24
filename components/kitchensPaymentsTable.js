@@ -6,7 +6,7 @@ import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-componen
 import { ScrollView } from "react-native-gesture-handler";
 
 const CONTENT = {
-  tableHead: ['Kitchen Name', 'Account No.', 'Total Earning', 'Pending','Date'],
+  tableHead: ['Kitchen Name', 'Account No.', 'Total Earning', 'Pending','Latest Paid Date'],
   tableData: [
     ['Bisma Ka Kitchen','03039898789', '10000', '1900','12-12-20202'],
     ['0','a', 'b', 'c', '1900','12-12-20202'],
@@ -28,7 +28,7 @@ const KitchensPaymentsTable=(props)=>{
               <Row
                 data={CONTENT.tableHead}
                
-                widthArr={[180, 110, 100,100,100]}
+                widthArr={[180, 110, 100,100,120]}
                 style={styles.head}
                 textStyle={styles.text}
               /> 
@@ -36,7 +36,7 @@ const KitchensPaymentsTable=(props)=>{
                 <Rows
                  data={props.tableContent}
                   //data={CONTENT.tableData}
-                  widthArr={[180,110,100,100,100]}
+                  widthArr={[180,110,100,100,120]}
                   style={styles.row}
                   textStyle={styles.text}
                 />

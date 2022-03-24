@@ -100,15 +100,57 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-    fetch(`http://${IP.ip}:3000/payments`)
+    let totalCollections;
+    let totalDeliveryChargess;
+    fetch(`http://${IP.ip}:3000/payments/onlyTotalCollection`)
     .then((response)=>response.json())
-    .then((response)=>dispatch(getAmountData(response[0])))
-    .then(()=>console.log(amountData))
+    .then((response)=>{
+       totalCollections=response[0].totalCollection;
+    })
+    .then(async ()=>{
+      await fetch(`http://${IP.ip}:3000/payments/onlyTotalDeliveryCharges`)
+      .then((response)=>response.json())
+      .then((response)=>{
+         totalDeliveryChargess=response[0].totalDeliveryCharges;
+      })
+    })
+    .then(()=>{
+      let amountObj={
+          totalCollection:totalCollections,
+          totalDeliveryCharges:totalDeliveryChargess}
+          console.log("// Amount Obj")
+          console.log(amountObj);
+          dispatch(getAmountData(amountObj))
+    })
     .then(()=>setAmountLoading(false))
     .catch((error)=>console.error(error))
   },[isAmountLoading,refreshing]);
 
+//   const getUpdatedPayments=async ()=>{
+//     let totalCollections;
+//     let totalDeliveryChargess;
+//     await fetch(`http://${IP.ip}:3000/payments/onlyTotalCollection`)
+//     .then((response)=>response.json())
+//     .then((response)=>{
+//        totalCollections=response[0].totalCollection;
+//     })
+//     .then(async ()=>{
+//       await fetch(`http://${IP.ip}:3000/payments/onlyTotalDeliveryCharges`)
+//       .then((response)=>response.json())
+//       .then((response)=>{
+//          totalDeliveryChargess=response[0].totalDeliveryCharges;
+//       })
+//     })
+//     .then(()=>{
+//       let amountObj={
+//           totalCollection:totalCollections,
+//           totalDeliveryCharges:totalDeliveryChargess}
+//           console.log("// Amount Obj")
+//           console.log(amountObj);
+//           dispatch(getAmountData(amountObj))
+//     })
 
+//   }
     
     /*
     useEffect(()=>{

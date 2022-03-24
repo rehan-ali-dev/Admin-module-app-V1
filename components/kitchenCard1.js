@@ -2,7 +2,7 @@ import React,{useEffect,useState} from "react";
 import { Text,View,StyleSheet,TouchableOpacity,Image,ImageBackground} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from "../constants/Colors";
-
+import IP from "../constants/IP";
 
 const KitchenCard=props=>{
    
@@ -11,7 +11,7 @@ const KitchenCard=props=>{
         <TouchableOpacity onPress={props.onSelect}>
         <View style={styles.kitchenHeader}>
             <View style={styles.logoContainer}>
-            <Image source={{uri:props.kitchenLogo}} style={styles.logoImage} />
+            <Image source={{uri:`http://${IP.ip}:3000/images/${props.kitchenLogo}`}} style={styles.logoImage} />
         </View>
         <View style={styles.nameRating}>
             <Text style={styles.kitchenName}>{props.kitchenName}</Text>

@@ -151,14 +151,14 @@ const OrderDetailsScreen=(props)=>{
                 <View style={styles.orderDetailsContainer}>
                 <View style={styles.orderSubcontainer}>
                 <Text style={styles.title}>Order Id: #{orderId}</Text>
-                <Text style={styles.timeZone}>Time{props.orderedTime}</Text>
+                <Text style={styles.timeZone}>Time: {placedTime.substring(11, 16)}</Text>
                 </View> 
                 <Text style={styles.subTitle}>Customer Name: {customerName}</Text>
                 <Text style={styles.subTitle}>Customer Phone: {customerId}</Text>
                 <Text style={styles.subTitle}>Kitchen Name:  {kitchenName}</Text>
                 <Text style={styles.subTitle}>Kitchen Phone:  {chefId}</Text>
                 <Text style={styles.subTitle}>Current Status:  {currentStatus}</Text>
-                <Text style={styles.subTitle}>Orderd Placed:{placedTime}</Text>
+                <Text style={styles.subTitle}>Orderd Placed: {placedTime.substring(0, 10)} {placedTime.substring(11, 16)}</Text>
                                 
 
                 <Text style={styles.headerText}>Items Details</Text>
@@ -285,6 +285,7 @@ const styles=StyleSheet.create(
             //borderWidth:0.5,
             backgroundColor: '#F5FCFF',
             height:45,
+            justifyContent:'center',
             borderRadius:10
           },
         notificationCard:{

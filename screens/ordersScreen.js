@@ -14,8 +14,10 @@ const OrdersScreen=(props)=>{
     const [ordersData,setOrdersData]=useState([]);
     const [showModal,setShowModal]=useState(false);
     const [deliveredOrderDetails,setDeliveredOrderDetails]=useState('');
+    //const [previousSavedPayments,setPreviousSavedPayments]=useState('');
     //const [particularChefData,setParticularChefData]=useState([]);
     let particularChefData;
+    let previousPaymentsRecord;
     let subTotalOfOrder;
     //const [subTotalOfOrder,setSubTotalOfOrder]=useState(0);
 
@@ -29,14 +31,15 @@ const OrdersScreen=(props)=>{
 
     
     
-
-
       const getDeliveredOrderDetails=(orderId)=>{
         fetch(`http://${IP.ip}:3000/order/orderRecord/${orderId}`)
         .then((response)=>response.json())
         .then((response)=>setDeliveredOrderDetails(response[0]))
         .catch((error)=>console.error(error))
       }
+
+
+
 
        /////////  Function to update the status of order 
        const updateOrderStatuses=(orderId)=>{
@@ -54,18 +57,21 @@ const OrdersScreen=(props)=>{
         }).then((response)=>response.json())
         .then(()=>dispatch(updateOrderCounts('delivered')))
         .then(()=>dispatch(updateOrderStatus(orderId,'delivered')))
+        .then(()=>console.log("// Entering in updated Paymnets"))
         .then(()=>getUpdatedPayments())
         .then(()=>sendNotificationToChef(orderId))
         .catch((error)=>console.error(error))   
       }
+
+
 
       const getPreviousPaymentsOfChef=async (kitchen)=>{
         await fetch(`http://${IP.ip}:3000/payments/kitchensPayments/${kitchen}`)
         .then((response)=>response.json())
         .then((response)=>{
             //setParticularChefData(response[0]))
-            console.log("Get PRevious PAyments")
-            console.log(response)
+            console.log(" // Get PRevious PAyments")
+            console.log(response[0])
             particularChefData=response[0]})
         .catch((error)=>console.error(error))
       }
@@ -102,11 +108,39 @@ const OrdersScreen=(props)=>{
 
 
       const getUpdatedPayments=async ()=>{
-        await fetch(`http://${IP.ip}:3000/payments`)
-        .then((response)=>response.json())
-        .then((response)=>dispatch(getAmountData(response[0])))
-        .catch((error)=>console.error(error))
+          let totalCollections;
+          let totalDeliveryChargess;
+          await fetch(`http://${IP.ip}:3000/payments/onlyTotalCollection`)
+          .then((response)=>response.json())
+          .then((response)=>{
+             totalCollections=response[0].totalCollection;
+          })
+          .then(async ()=>{
+            await fetch(`http://${IP.ip}:3000/payments/onlyTotalDeliveryCharges`)
+            .then((response)=>response.json())
+            .then((response)=>{
+               totalDeliveryChargess=response[0].totalDeliveryCharges;
+            })
+          })
+          .then(()=>{
+            let amountObj={
+                totalCollection:totalCollections,
+                totalDeliveryCharges:totalDeliveryChargess}
+                console.log("// Amount Obj")
+                console.log(amountObj);
+                dispatch(getAmountData(amountObj))
+          })
+
+        // await fetch(`http://${IP.ip}:3000/payments`)
+        // .then((response)=>response.json())
+        // .then((response)=>{
+        //     dispatch(getAmountData(response[0]))
+        //     console.log("// Get Ammount DAta")
+        //     console.log(response[0]);
+        // })
+        // .catch((error)=>console.error(error))
       }
+
 
 
       const getOrderSubTotal=async (orderId)=>{
@@ -139,6 +173,9 @@ const OrdersScreen=(props)=>{
         .then(()=>dispatch(updateStaffStatus(staffId,1)))
         .catch((error)=>console.error(error))   
       }*/
+
+
+
       const removeAfterDelivery=(staffId)=>{
         let url=`http://${IP.ip}:3000/staff//removeAfterDelivery`;
         let data={
@@ -278,9 +315,12 @@ const OrdersScreen=(props)=>{
                     setShowModal(false);
                     console.log("//////////// DELIVERED ORDER DETAILS ///////////");
                     console.log(deliveredOrderDetails);
-                   
+                   console.log("// Entering for updating Payments //")
                     setUpdatedPayments(deliveredOrderDetails.kitchen,deliveredOrderDetails.order_id);
+                    console.log("// Updated Payments Function Executed //");
+                    console.log("// Entering for updating Order Status //")
                     updateOrderStatuses(deliveredOrderDetails.order_id);
+                    console.log("// Updated Order Status Function Executed //");
                     //updateStaffStatuses(deliveredOrderDetails.staff);
                     removeAfterDelivery(deliveredOrderDetails.staff_id);
                     showAlert(deliveredOrderDetails.order_id,deliveredOrderDetails.total_amount,deliveredOrderDetails.staff);

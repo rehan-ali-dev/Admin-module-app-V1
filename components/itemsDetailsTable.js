@@ -24,6 +24,7 @@ const ItemDetailsTable=(props)=>{
     const [items,setItems]=useState([]);
     const [orderedItems,setOrderedItems]=useState([]);
     const [refreshing,setRefreshing]=useState(true);
+    let orderedItemsDetails=[];
 
     useEffect(()=>{
         const orderId=props.orderID;
@@ -39,10 +40,14 @@ const ItemDetailsTable=(props)=>{
                 let quantity=row.quantity;
                 let totalAmount=row.total_amount;
                 let newRow=[dishId,dishName,quantity,totalAmount];
-                itemsArray.push(newRow);   
-                setOrderedItems(itemsArray); 
+                itemsArray.push(newRow); 
+                //orderedItemsDetails.push(newRow);  
+                //setOrderedItems(itemsArray); 
+                // console.log("////////////// ORdered ITems ");
+                // console.log(orderedItems);
             })
             setOrderedItems(itemsArray);
+            //orderedItemsDetails=itemsArray;
         })
         .then(()=>setRefreshing(false))
         .catch((error)=>console.error(error))
@@ -62,7 +67,8 @@ const ItemDetailsTable=(props)=>{
               /> 
               <TableWrapper style={styles.wrapper}>
                 <Rows
-                  data={orderedItems}
+                   data={orderedItems}
+                  //data={orderedItemsDetails}
                   flexArr={[1,2,1,1]}
                   style={styles.row}
                   textStyle={styles.text}

@@ -7,7 +7,7 @@ import CollectionsCard from "../components/collectionsCard";
 import KitchensPaymentsTable from "../components/kitchensPaymentsTable";
 import { useSelector,useDispatch } from "react-redux";
 import IP from "../constants/IP";
-import { getKitchensPayments } from "../store/actions/adminActions";
+import { getKitchensPayments,updateKitchenPayment } from "../store/actions/adminActions";
 import { ScrollView } from "react-native-gesture-handler";
 import PaymentRecordTable from "../components/paymentRecordTable";
 
@@ -32,6 +32,7 @@ const PaymentsScreen=(props)=>{
     const dispatch=useDispatch();
 
     const paymentRecord=useSelector(state=>state.admin.AmountData);
+    const kitchensPaymentsData=useSelector(state=>state.admin.KitchensPayments);
 
     
     useEffect(()=>{
@@ -61,7 +62,8 @@ const PaymentsScreen=(props)=>{
                 let account=row.account_number;
                 let total=row.total_earning;
                 let date1=row.date;
-                let date=date1.substring(0, 10)
+                let date2=date1.toString();
+                let date=date2.substring(0, 10)
                 let pending=row.pending;
                  let newRow=[kitchen,account,total,pending,date];
                 tempArray.push(newRow); 
@@ -76,6 +78,8 @@ const PaymentsScreen=(props)=>{
       
     const updatePaymentHandler=async (kitchen,pending,toBePay)=>{
         let updatedPending=pending-toBePay;
+        var today = new Date();
+        var todayDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         console.log(updatedPending);
         let url=`http://${IP.ip}:3000/payments/updatePayment/${kitchen}`;
         let data={
@@ -89,6 +93,7 @@ const PaymentsScreen=(props)=>{
               },
             body:JSON.stringify(data)
         }).then((response)=>response.json())
+        .then(()=>dispatch(updateKitchenPayment(kitchen,updatedPending,todayDate)))
         .catch((error)=>console.error(error))
         .finally(()=>ToastAndroid.show(`Payment Updated SuccessFully`, ToastAndroid.SHORT))
     }
@@ -101,10 +106,10 @@ const PaymentsScreen=(props)=>{
              <CollectionsCard box1="Total Collection" box2="Delivery Charges" header="Today's Collection" totalCollection={paymentRecord.totalCollection} totalCharges={paymentRecord.totalDeliveryCharges}/>
              
             <View style={{alignItems:'center',paddingTop:15}}>
-             <Text style={styles.headerText}>Kitchens's Payments</Text>
+             <Text style={styles.headerText}>Kitchens Payments</Text>
              </View>
             
-             <KitchensPaymentsTable tableContent={prepareKitchensPaymentsForTable(kitchensPayments)}/> 
+             <KitchensPaymentsTable tableContent={prepareKitchensPaymentsForTable(kitchensPaymentsData)}/> 
              {/* <PaymentRecordTable/> */}
 
              </ScrollView>

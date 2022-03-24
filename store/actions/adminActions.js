@@ -11,6 +11,8 @@ export const GET_STAFF_AVAILABLE='GET_STAFF_AVAILABLE';
 export const UPDATE_STAFF_STATUS='UPDATE_STAFF_STATUS';
 export const GET_AMOUNT_DATA='GET_AMOUNT_DATA';
 export const GET_KITCHENS_PAYMENTS='GET_KITCHENS_PAYMENTS';
+export const UPDATE_PAYMENTS='UPATE_PAYMENTS';
+export const UPDATE_KITCHEN_PAYMENT='UPDATE_KITCHEN_PAYMENT';
 
 
 
@@ -67,4 +69,8 @@ export const updateOrderStatus=(item,status)=>{
 
 export const updateStaffStatus=(item,status)=>{
     return{type:UPDATE_STAFF_STATUS,staffId:item,staffStatus:status};
+}
+
+export const updateKitchenPayment=(kitchen,pending,date)=>{
+    return{type:UPDATE_KITCHEN_PAYMENT,kitchen:kitchen,pending:pending,date:date};
 }
