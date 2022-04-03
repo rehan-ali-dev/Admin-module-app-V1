@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Linking,
-  Platform
+  Platform,
+  Modal
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import Colors from "../constants/Colors"
@@ -22,7 +23,8 @@ const RequestDetailScreen = (props) => {
     const [requestData,setRequestData]=useState({});
     const [isRefreshing,setRefreshing]=useState(true);
     const phoneNo=props.navigation.getParam('phone');
-
+    const [showModal,setShowModal]=useState(false);
+    const [reqState,setReqState]=useState('');
 
     useEffect(()=>{
         fetch(`http://${IP.ip}:3000/chef/requests/getReqDetails/${phoneNo}`)
@@ -50,6 +52,7 @@ const RequestDetailScreen = (props) => {
             body:JSON.stringify(data)
         }).then((response)=>response.json())
         .then(()=>ToastAndroid.show("Message Sent", ToastAndroid.SHORT))
+        .then(()=>props.navigation.navigate('Home'))
 
     }
 
@@ -73,6 +76,7 @@ const RequestDetailScreen = (props) => {
                 body:JSON.stringify(data)
             }).then((response)=>response.json())
             .then(()=>ToastAndroid.show("Message Sent", ToastAndroid.SHORT))
+            .then(()=>props.navigation.navigate('Home'))
                 })
             })
             })
@@ -220,12 +224,24 @@ const RequestDetailScreen = (props) => {
         {/* //Buttons Container */}
 
         <View style={styles.btnContainer}>
-                <TouchableOpacity onPress={rejectHandler}>
+                <TouchableOpacity 
+                //onPress={rejectHandler}
+                onPress={()=>{
+                  setReqState('Reject');
+                  setShowModal(true);
+              }}
+                >
                     <View style={{...styles.buttonContainer,backgroundColor:Colors.primaryLightColor}}>
                         <Text style={styles.btnTitle}>Reject</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={approveHandler}>
+                <TouchableOpacity 
+                //onPress={approveHandler}
+                onPress={()=>{
+                    setReqState('Accept');
+                    setShowModal(true);
+                }}
+                >
                     <View style={{...styles.buttonContainer}}>
                         <Text style={styles.btnTitle}>Approve</Text>
                     </View>
@@ -233,6 +249,43 @@ const RequestDetailScreen = (props) => {
         </View>
 
       </ScrollView>
+      <Modal
+                transparent={true}
+                visible={showModal}>
+                <View style={{backgroundColor:'#000000aa',flex:1}}>
+                    <View style={{backgroundColor:'#fff',margin:40,marginTop:120,borderRadius:10,padding:10}}>
+                    <Text style={{...styles.title,fontSize:14}}>Are you sure to {reqState} this request?</Text>
+                  
+                {/*<OrderDetailsTable orderID={selectedOrderId}/>*/}   
+                <View style={{...styles.btnContainer,justifyContent:'flex-end'}}>
+               
+                <TouchableOpacity onPress={()=>{
+                    setShowModal(false);
+                    }}>       
+                <View style={{...styles.buttonContainer,backgroundColor:Colors.primaryLightColor,paddingHorizontal:10,borderRadius:10}}>
+                    <Text style={{...styles.btnTitle,fontSize:14}}>Cancel</Text>
+                </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    if(reqState==='Accept'){
+                      approveHandler();
+                    
+                    }
+                    else if(reqState==='Reject'){
+                      rejectHandler();
+                    }
+                    setShowModal(false);
+                    }}>       
+                <View style={{...styles.buttonContainer,backgroundColor:Colors.primaryColor,paddingHorizontal:10,borderRadius:10}}>
+                    <Text style={{...styles.btnTitle,fontSize:14}}>{reqState}</Text>
+                </View>
+                </TouchableOpacity>
+                </View>
+
+                </View>
+                </View>
+            </Modal>
+
     </View>
   )
 }

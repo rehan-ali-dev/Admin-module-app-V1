@@ -152,6 +152,8 @@ const OrderDetailsScreen=(props)=>{
                 <View style={styles.orderSubcontainer}>
                 <Text style={styles.title}>Order Id: #{orderId}</Text>
                 <Text style={styles.timeZone}>Time: {placedTime.substring(11, 16)}</Text>
+                {/* <Text style={styles.timeZone}>Time: {placedTime}</Text> */}
+
                 </View> 
                 <Text style={styles.subTitle}>Customer Name: {customerName}</Text>
                 <Text style={styles.subTitle}>Customer Phone: {customerId}</Text>

@@ -3,7 +3,7 @@ import { GET_ORDER_DETAILS,GET_ORDER_DATA,UPDATE_ORDER_STATUS,
     GET_STAFF_DATA,UPDATE_STAFF_STATUS,GET_STAFF_AVAILABILITY,
     GET_AMOUNT_DATA,GET_ADMIN_DATA,GET_DISHES_DATA,
     GET_STAFF_ASSIGNED,GET_STAFF_AVAILABLE,
-    GET_KITCHENS_PAYMENTS,UPDATE_KITCHEN_PAYMENT
+    GET_KITCHENS_PAYMENTS,UPDATE_KITCHEN_PAYMENT,UPDATE_KITCHEN_PAYMENT2
  } from "../actions/adminActions";
 
 import IP from "../../constants/IP";
@@ -97,6 +97,19 @@ const adminReducer=(state=initialState,action)=>{
                     return {...state,KitchensPayments:kitchensPaymentsData};
                     };
                 return state;
+        
+        case UPDATE_KITCHEN_PAYMENT2:
+                const isKitchenSelected2=state.KitchensPayments.findIndex(kitchen=>kitchen.kitchen_name===action.kitchen);
+                if(isKitchenSelected2>=0){
+                        let selectedKitchen=state.KitchensPayments[isKitchenSelected2];
+                        //selectedKitchen.total_earning=action.total;
+                        selectedKitchen.pending=action.pending;
+                        selectedKitchen.total_earning=action.total;
+                        const kitchensPaymentsData=[...state.KitchensPayments];
+                        kitchensPaymentsData.splice(isKitchenSelected2, 1,selectedKitchen);
+                        return {...state,KitchensPayments:kitchensPaymentsData};
+                        };
+            return state;
         
         case UPDATE_ORDER_COUNTS:
                     let counts=state.OrdersCounts;

@@ -2,7 +2,7 @@ import React,{useCallback, useEffect,useState} from "react";
 import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,Modal,TextInput,Alert,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
 import { useDispatch,useSelector } from "react-redux";
-import { updateOrderCounts,updateOrderStatus,getStaffAssigned,getAmountData,getStaffAvailable } from "../store/actions/adminActions";
+import { updateOrderCounts,updateOrderStatus,getStaffAssigned,getAmountData,getStaffAvailable,updateKitchenPayment2 } from "../store/actions/adminActions";
 import IP from "../constants/IP";
 import OrdersCard from '../components/ordersCard';
 import OrderCardOrders from "../components/orderCardOrdersScreen";
@@ -79,6 +79,7 @@ const OrdersScreen=(props)=>{
 
       const setUpdatedPayments=(kitchen,orderId)=>{
           console.log("Entered")
+         
           getOrderSubTotal(orderId).then(()=>{
               console.log("///// SubTotal OF ORder ")
               console.log(subTotalOfOrder)
@@ -98,6 +99,7 @@ const OrdersScreen=(props)=>{
               },
             body:JSON.stringify(data)
         }).then((response)=>response.json())
+        .then(()=>dispatch(updateKitchenPayment2(kitchen,particularChefData.total_earning+subTotalOfOrder,particularChefData.pending+subTotalOfOrder)))
         .then(()=>console.log("Done"))
         .catch((error)=>console.error(error))   
           })

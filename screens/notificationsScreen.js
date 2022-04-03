@@ -1,5 +1,5 @@
 import React from "react";
-import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity } from "react-native";
+import { View,Text,StyleSheet, Button, FlatList, Dimensions,TouchableOpacity,RefreshControl } from "react-native";
 import Colors from '../constants/Colors';
 import { useEffect, useState } from "react";
 import RequestCard from "../components/requestCard";
@@ -50,7 +50,7 @@ const NotificationsScreen=(props)=>{
               }}/> */}
               <FlatList data={pendingRequests} renderItem={renderRequestCard} keyExtractor={(item)=>item.kitchen_name}
             showsVerticalScrollIndicator={false}
-            
+            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={()=>{setRefreshing(true)}}/>}
             />
               </View>
           </View>

@@ -13,6 +13,7 @@ export const GET_AMOUNT_DATA='GET_AMOUNT_DATA';
 export const GET_KITCHENS_PAYMENTS='GET_KITCHENS_PAYMENTS';
 export const UPDATE_PAYMENTS='UPATE_PAYMENTS';
 export const UPDATE_KITCHEN_PAYMENT='UPDATE_KITCHEN_PAYMENT';
+export const UPDATE_KITCHEN_PAYMENT2='UPDATE_KITCHEN_PAYMENT2';
 
 
 
@@ -73,4 +74,8 @@ export const updateStaffStatus=(item,status)=>{
 
 export const updateKitchenPayment=(kitchen,pending,date)=>{
     return{type:UPDATE_KITCHEN_PAYMENT,kitchen:kitchen,pending:pending,date:date};
+}
+
+export const updateKitchenPayment2=(kitchen,total,pending)=>{
+    return{type:UPDATE_KITCHEN_PAYMENT2,kitchen:kitchen,total:total,pending:pending};
 }

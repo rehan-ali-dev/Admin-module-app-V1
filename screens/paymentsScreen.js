@@ -185,8 +185,8 @@ const PaymentsScreen=(props)=>{
                 <View style={{...styles.btnContainer2,justifyContent:'space-between',marginTop:10}}>
                 <TouchableOpacity onPress={()=>{
                     setShowModal(false);
-                    }}>       
-                <View style={{...styles.buttonContainer2,backgroundColor:Colors.primaryLightColor}}>
+                    }} style={{...styles.buttonContainer2,backgroundColor:Colors.primaryLightColor}}>       
+                <View>
                     <Text style={styles.btnTitle}>Cancel</Text>
                 </View>
                 </TouchableOpacity>
@@ -198,8 +198,8 @@ const PaymentsScreen=(props)=>{
                     })
                     
                     
-                    }}>
-                <View style={{...styles.buttonContainer2}}>
+                    }} style={styles.buttonContainer2}>
+                <View>
                     <Text style={styles.btnTitle}>Update</Text>
                 </View>
                 </TouchableOpacity>
@@ -302,7 +302,7 @@ const styles=StyleSheet.create(
         backgroundColor:Colors.primaryColor,
         justifyContent:'center',
         alignItems:'center',
-        padding:3,
+        paddingVertical:3,
         width:100,
         marginHorizontal:5,
         marginBottom:5,
@@ -310,7 +310,8 @@ const styles=StyleSheet.create(
     },
     btnContainer2:{
         flexDirection:'row',
-        justifyContent:'flex-end',
+        //justifyContent:'flex-end',
+
         
     },
     
