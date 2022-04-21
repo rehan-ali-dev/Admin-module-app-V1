@@ -23,6 +23,8 @@ import RequestDetailScreen from '../screens/requestDetailScreen';
 import StaffScreen from '../screens/staffScreen';
 import OrderDetailsScreen from '../screens/orderDetailsScreen';
 import LoginScreen from '../screens/loginScreen';
+import PlanListScreen from '../screens/plansListScreen';
+import WeeklyPlanDetailsScreen from '../screens/weeklyPlanDetailsScreen';
 
 
 const defaultNavConfiguration= {
@@ -41,6 +43,8 @@ const HomeNavigator=createStackNavigator(
         Home: HomeScreen,
         Notifications:NotificationsScreen,
         RequestDetail:RequestDetailScreen,
+        WeeklyPlanDetails:WeeklyPlanDetailsScreen,
+        PlansList:PlanListScreen
     },defaultNavConfiguration
 );
 

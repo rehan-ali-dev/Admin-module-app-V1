@@ -23,13 +23,13 @@ const KitchensScreen=(props)=>{
         .catch((error)=>console.error(error))
       },[]);
 
-    useEffect(()=>{
-        fetch(`http://${IP.ip}:3000/dish`)
-        .then((response)=>response.json())
-        .then((response)=>dispatch(getDishesData(response)))
-        .catch((error)=>console.error(error))
-        .finally(()=>setLoading(false))
-    },[isLoading])
+    // useEffect(()=>{
+    //     fetch(`http://${IP.ip}:3000/dish`)
+    //     .then((response)=>response.json())
+    //     .then((response)=>dispatch(getDishesData(response)))
+    //     .catch((error)=>console.error(error))
+    //     .finally(()=>setLoading(false))
+    // },[isLoading])
 
       const renderKitchenCard=(itemData)=>{
         return(

@@ -133,14 +133,6 @@ const OrdersScreen=(props)=>{
                 dispatch(getAmountData(amountObj))
           })
 
-        // await fetch(`http://${IP.ip}:3000/payments`)
-        // .then((response)=>response.json())
-        // .then((response)=>{
-        //     dispatch(getAmountData(response[0]))
-        //     console.log("// Get Ammount DAta")
-        //     console.log(response[0]);
-        // })
-        // .catch((error)=>console.error(error))
       }
 
 

@@ -9,9 +9,11 @@ import NotificationCardHome from "../components/NotificationCardHome";
 import StaffCardHome from "../components/staffCardHome";
 import PendingTable from "../components/tableComponentPending";
 import { useDispatch,useSelector } from "react-redux";
-import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned,getAdminData } from "../store/actions/adminActions";
+import { MaterialIcons } from '@expo/vector-icons';
+import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned,getAdminData,getDishesData } from "../store/actions/adminActions";
 import { ScrollView } from "react-native-gesture-handler";
 import IP from "../constants/IP";
+
 
 
 const HomeScreen=(props)=>{
@@ -55,6 +57,11 @@ const HomeScreen=(props)=>{
             .then((response)=>response.json())
             .then((response)=>setOrderCountsDetails(response[0]))
             .then(()=>dispatch(getOrderCounts(OrderCountsDetails)))
+            .then(()=>{
+                fetch(`http://${IP.ip}:3000/dish`)
+                .then((response)=>response.json())
+                .then((response)=>dispatch(getDishesData(response)))
+            })
             //.then(()=>console.log(totalOrdersCounts))
             
         .catch((error)=>console.error(error))
@@ -106,7 +113,18 @@ useEffect(()=>{
     .then((response)=>response.json())
     .then((response)=>{
        totalCollections=response[0].totalCollection;
+       console.log(totalCollections);
     })
+    .then(async ()=>{
+        await fetch(`http://${IP.ip}:3000/payments/totalPlanCollection`)
+        .then((response)=>response.json())
+        .then((response)=>{
+           totalCollections=totalCollections+response[0].totalPlanCollection;
+           console.log("AFter .........")
+           console.log(totalCollections);
+        })
+
+      })
     .then(async ()=>{
       await fetch(`http://${IP.ip}:3000/payments/onlyTotalDeliveryCharges`)
       .then((response)=>response.json())
@@ -257,6 +275,19 @@ useEffect(()=>{
               
               <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}>
               <OrdersCard pending={totalOrdersCounts.pendingCounts} box1="Pending" confirmed={totalOrdersCounts.confirmedCounts} box2="Confirmed" delivered={totalOrdersCounts.deliveredCounts} box3="Delivered" header="Orders Summary"/>
+              <View style={styles.weeklyPlanCard}>
+                    <Text style={styles.headerText}>Weekly Plan Details</Text>
+                    <TouchableOpacity onPress={
+                         ()=>props.navigation.navigate({
+                            routeName:'PlansList'
+                        })
+                    }>
+                    <View style={{flexDirection:'row',width:'80%',justifyContent:"space-between"}}>
+                    <Text style={{fontSize:16}}>Details of all weekly plans are here </Text>
+                    <MaterialIcons name="navigate-next" size={24} color="black" />
+                    </View>
+                    </TouchableOpacity>
+                  </View>
               <NotificationCardHome tableData={preparePendingOrdersForTable(ordersData)}
             onSelect={()=>{}}/>
             {/*<StaffCardHome tableData={prepareStaffForTable(staffRecord)}/>*/}
@@ -284,7 +315,28 @@ const styles=StyleSheet.create(
     {
         screen:{
             flex:1,
-        }
+
+        },
+        headerText:{
+            color:Colors.primaryColor,
+            fontSize:16,
+            fontWeight:"bold",
+           
+        },
+        weeklyPlanCard:{
+            width:'95%',
+            flex:1,
+            // backgroundColor:Colors.whiteColor,
+            backgroundColor:'#f5f5f5',
+            borderRadius:10,
+            //shadowColor:Colors.lightBlack,
+            elevation:10,
+            alignItems:'center',
+            marginHorizontal:10,
+            paddingVertical:10,
+        },
+      
+        
        
     }
 )
