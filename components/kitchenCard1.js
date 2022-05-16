@@ -5,6 +5,33 @@ import Colors from "../constants/Colors";
 import IP from "../constants/IP";
 
 const KitchenCard=props=>{
+
+    const starImgFilled='https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png';
+    const starImgCorner='https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png';
+
+    const [maxRating,setMaxRating]=useState([1,2,3,4,5]);
+
+    const CustomRatingBar=()=>{
+        return(
+            <View style={styles.rating}>
+                {
+                    maxRating.map((item,key)=>{
+                        return(
+                         <Image
+                            style={styles.starImgStyle}
+                            key={item}
+                            source={
+                                item<=props.rating
+                                ? {uri:starImgFilled}
+                                : {uri:starImgCorner}
+                            }
+                            />
+                        )
+                    })
+                }
+            </View>
+        )}
+
    
     return(
         <View style={styles.kitchenCard}>
@@ -28,6 +55,22 @@ const KitchenCard=props=>{
             <View>
                 <Text style={styles.numDishes}>Contact : {props.chefId}</Text>
             </View>
+           {props.rating &&
+            <View style={{flexDirection:'row'}}>
+            <Text style={styles.numDishes}>Rating: </Text>
+            <View style={styles.rating}>
+                <CustomRatingBar/>
+           
+            </View>
+            </View>
+            }
+            {props.address &&
+            <View style={{flexDirection:'row'}}>
+            <Text style={{...styles.numDishes}}>Address: </Text>
+            <Text style={{...styles.numDishes,fontSize:14}}>{props.address}</Text>
+
+            </View>
+             }
             <View>
                 <Text style={styles.numDishes}>{props.noOfDishes} DISHES</Text>
             </View>
@@ -60,18 +103,20 @@ const styles=StyleSheet.create({
 
 
     kitchenCard:{
-         height:160,
+         //height:160,
+         flex:1,
          width:'95%',
          backgroundColor:'#f5f5f5',
          borderRadius:15,
          elevation:5,
          overflow:'hidden',
          marginVertical:5,
-         marginHorizontal:10
+         marginHorizontal:10,
+         paddingBottom:5,
        
     },
     kitchenHeader:{
-        height:'75%',
+        height:120,
         width:'100%',
         padding:15,
         flexDirection:'row',
@@ -81,6 +126,7 @@ const styles=StyleSheet.create({
         width:80,
         height:80,
         borderRadius:40,
+        marginTop:20,
         overflow:'hidden',
         marginEnd:10     
     },
@@ -115,6 +161,7 @@ const styles=StyleSheet.create({
         paddingTop:10,
     },
     timeDetail:{
+        marginTop:15,
         flexDirection:'row',
         justifyContent:'space-between'
        
@@ -124,7 +171,19 @@ const styles=StyleSheet.create({
     },
     timeData:{
         color:Colors.lightBlack
-    }
+    },
+    nameRating:{
+        flexDirection:'column'
+    },
+    rating:{
+        flexDirection:'row'
+    },
+    starImgStyle:{
+        width:20,
+        height:20,
+        resizeMode:'cover'
+    },
+
 
 });
 

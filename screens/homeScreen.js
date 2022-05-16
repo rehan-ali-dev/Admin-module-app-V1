@@ -10,7 +10,7 @@ import StaffCardHome from "../components/staffCardHome";
 import PendingTable from "../components/tableComponentPending";
 import { useDispatch,useSelector } from "react-redux";
 import { MaterialIcons } from '@expo/vector-icons';
-import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned,getAdminData,getDishesData } from "../store/actions/adminActions";
+import { getOrderCounts,getOrderData,getStaffData,getAmountData,getStaffAssigned,getAdminData,getDishesData,getRatingData } from "../store/actions/adminActions";
 import { ScrollView } from "react-native-gesture-handler";
 import IP from "../constants/IP";
 
@@ -22,6 +22,7 @@ const HomeScreen=(props)=>{
     const [isOrdersLoading,setOrdersLoading]=useState(true);
     const [isStaffLoading,setStaffLoading]=useState(true);
     const [isStaffAvLoading,setStaffAvLoading]=useState(true);
+    const [kitchensDataLoading,setKitchensDataLoading]=useState(true);
     const [isAmountLoading,setAmountLoading]=useState(true);
     const [OrderCountsDetails,setOrderCountsDetails]=useState([]);
     const dispatch=useDispatch();
@@ -68,6 +69,15 @@ const HomeScreen=(props)=>{
         .finally(()=>setRefreshing(false));
 
     },[refreshing])
+
+    useEffect(()=>{
+        fetch(`http://${IP.ip}:3000/order/ratingRecord/rating`)
+        .then((response)=>response.json())
+        .then((response)=>{ dispatch(getRatingData(response));
+        })
+        .catch((error)=>console.error(error))
+        .finally(()=>setKitchensDataLoading(false));
+      },[kitchensDataLoading]);
 
 
     useEffect(()=>{     

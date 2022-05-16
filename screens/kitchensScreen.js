@@ -12,6 +12,11 @@ const KitchensScreen=(props)=>{
     const [isLoading,setLoading]=useState(true);
     const [kitchensData,setkitchensData]=useState([]);
     const [dishesData,setDishesData]=useState([]);
+    let currentRating;
+
+    const ratings=useSelector(state=>state.admin.ratingsOfKitchens);
+    console.log("////  Ratings   ////");
+    console.log(ratings);
 
     const dispatch=useDispatch();
 
@@ -32,12 +37,29 @@ const KitchensScreen=(props)=>{
     // },[isLoading])
 
       const renderKitchenCard=(itemData)=>{
+
+        let ratingObject = ratings.find(obj => obj.chef_id === itemData.item.chef_id);
+        console.log("///// Rating OBJ///////")
+        console.log(ratingObject);
+        if(ratingObject){
+            let rating=Math.ceil(ratingObject.totalRating/ratingObject.deliveredOrders)
+            console.log("////////////")
+            console.log(itemData.item.chef_id);
+            console.log(rating);
+            currentRating=rating;
+            //selectedRating=rating;
+        }
+        else{
+            currentRating=3;
+        }
+
         return(
            <KitchenCard kitchenName={itemData.item.kitchen_name} kitchenLogo={itemData.item.logo} startTime={itemData.item.start_time}
             endTime={itemData.item.end_time}
             fname={itemData.item.firstname}
             lname={itemData.item.lastname}
             noOfDishes={itemData.item.numDishes}
+            rating={currentRating}
             chefId={itemData.item.chef_id}
             onSelect={()=>{
                 props.navigation.navigate({
@@ -50,7 +72,9 @@ const KitchensScreen=(props)=>{
                       fname:itemData.item.firstname,
                       lname:itemData.item.lastname,
                       noOfDishes:itemData.item.numDishes,
-                      chefId:itemData.item.chef_id
+                      chefId:itemData.item.chef_id,
+                      address:itemData.item.address,
+                      locality:itemData.item.locality,
 
 
                     }

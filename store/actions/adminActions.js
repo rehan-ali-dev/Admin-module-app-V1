@@ -1,5 +1,6 @@
 export const GET_ORDER_DATA='GET_ORDER_DATA';
 export const GET_ADMIN_DATA='GET_ADMIN_DATA';
+export const GET_RATING_DATA='GET_RATING_DATA';
 export const GET_DISHES_DATA='GET_DISHES_DATA';
 export const GET_ORDER_DETAILS='GET_ORDER_DETAILS';
 export const GET_ORDER_COUNTS='GET_ORDER_COUNTS';
@@ -57,6 +58,10 @@ export const getOrderDetails=(items)=>{
 
 export const getOrderCounts=(countsObj)=>{
     return{type:GET_ORDER_COUNTS,orderCounts:countsObj};
+}
+
+export const getRatingData=(items)=>{
+    return{type:GET_RATING_DATA,ratings:items};
 }
 
 

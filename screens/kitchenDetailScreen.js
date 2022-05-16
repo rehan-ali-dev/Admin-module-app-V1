@@ -16,6 +16,8 @@ const KitchenDetailScreen=(props)=>{
 
         const kitchenName=props.navigation.getParam('kitchenName');
         const allDishes=useSelector(state=>state.admin.Dishes);
+        const ratings=useSelector(state=>state.admin.ratingsOfKitchens);
+
         const dishes=allDishes.filter(dish=>dish.kitchen_name===kitchenName);
 
         /*
@@ -36,6 +38,8 @@ const KitchenDetailScreen=(props)=>{
         const lname=props.navigation.getParam('lname');
         const chefId=props.navigation.getParam('chefId');
         const noOfDishes=props.navigation.getParam('noOfDishes');
+        const address=props.navigation.getParam('address');
+        const locality=props.navigation.getParam('locality');
 
 
         const renderFoodItem=(itemData)=>{
@@ -61,7 +65,8 @@ const KitchenDetailScreen=(props)=>{
             <View style={styles.container}>
                 <View style={styles.kitchenContainer}>
               <KitchenCard kitchenName={kitchenName} kitchenLogo={kitchenLogo} startTime={startTime}
-            endTime={endTime} fname={fname} lname={lname} chefId={chefId} noOfDishes={noOfDishes} />
+            endTime={endTime} fname={fname} lname={lname} chefId={chefId} noOfDishes={noOfDishes}
+            address={address} locality={locality} />
             </View>
             {dishes.length>0 &&
             <FlatList data={dishes} renderItem={renderFoodItem} keyExtractor={(item)=>item.dish_id}
@@ -82,6 +87,7 @@ const styles=StyleSheet.create(
         },
         kitchenContainer:{
            width:'100%',
+           height:200,
            backgroundColor:Colors.primaryColor,
            paddingVertical:5
           

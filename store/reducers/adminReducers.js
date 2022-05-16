@@ -1,5 +1,5 @@
 import { GET_ORDER_DETAILS,GET_ORDER_DATA,UPDATE_ORDER_STATUS,
-    GET_ORDER_COUNTS,UPDATE_ORDER_COUNTS,
+    GET_ORDER_COUNTS,UPDATE_ORDER_COUNTS,GET_RATING_DATA,
     GET_STAFF_DATA,UPDATE_STAFF_STATUS,GET_STAFF_AVAILABILITY,
     GET_AMOUNT_DATA,GET_ADMIN_DATA,GET_DISHES_DATA,
     GET_STAFF_ASSIGNED,GET_STAFF_AVAILABLE,
@@ -20,6 +20,7 @@ const initialState={
     OrderDetails:[],
     AdminDetails:[],
     KitchensPayments:[],
+    ratingsOfKitchens:[],
     OrdersCounts:{
         totalOrders:0,
         pendingCounts:0,
@@ -60,6 +61,9 @@ const adminReducer=(state=initialState,action)=>{
         
         case GET_ORDER_COUNTS:
             return {...state,OrdersCounts:action.orderCounts};
+        
+        case GET_RATING_DATA:
+            return {...state,ratingsOfKitchens:action.ratings};
         
         case GET_AMOUNT_DATA:
             return {...state,AmountData:action.amount};
