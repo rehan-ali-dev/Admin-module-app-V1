@@ -243,7 +243,7 @@ const PlanListScreen=(props)=>{
         return(
             <View style={styles.container}>
             <View style={styles.kitchenContainer}>
-            <FlatList data={plansData} renderItem={renderNotificationCard} keyExtractor={(item)=>item.plan_id}
+            <FlatList data={plansData} renderItem={renderNotificationCard} keyExtractor={(item)=>item.subscription_id}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}}/>}
 
             showsVerticalScrollIndicator={false}/>
